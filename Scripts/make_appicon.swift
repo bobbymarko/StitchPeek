@@ -2,18 +2,23 @@
 //
 //     swift Scripts/make_appicon.swift
 //
-// The source is full-bleed square art. macOS app icons are not: they sit in a rounded
-// superellipse inset from the canvas edge, so an unmasked square reads as oversized and
-// foreign next to every other icon in the Dock. Apple's reference geometry on a 1024 canvas
-// is an 824-point body with a 185.4-point corner radius, which is what the ratios below are.
+// The art is written FULL BLEED: edge to edge, fully opaque, no rounding and no inset.
+//
+// macOS 26 applies the icon shape itself — it masks whatever you supply into its own rounded
+// container. Pre-applying the old squircle-and-inset treatment (Apple's classic 824-in-1024
+// body) therefore insets the art twice, and the transparent margin you left behind shows
+// through as a grey plate around a shrunken icon. Supply the full square and let the system
+// mask it.
+//
+// If you ever need the pre-Tahoe treatment back, restore an inset < 1 and clip to a rounded
+// rect of ~22.5% of the body.
 
 import CoreGraphics
 import Foundation
 import ImageIO
 import UniformTypeIdentifiers
 
-let bodyRatio: CGFloat = 824.0 / 1024.0
-let cornerRatio: CGFloat = 185.4 / 824.0
+let bodyRatio: CGFloat = 1.0
 
 /// (point size, scale) pairs macOS asks for.
 let variants: [(Int, Int)] = [
@@ -40,6 +45,8 @@ else { fail("could not read \(source.path)") }
 try? FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
 
 func writeIcon(pixels: Int, to url: URL) {
+    // No alpha channel at all: the icon must be completely opaque, or macOS composites its
+    // own background through any translucent pixel.
     guard let space = CGColorSpace(name: CGColorSpace.sRGB),
           let context = CGContext(
             data: nil,
@@ -48,7 +55,7 @@ func writeIcon(pixels: Int, to url: URL) {
             bitsPerComponent: 8,
             bytesPerRow: 0,
             space: space,
-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue
           )
     else { fail("could not create a \(pixels)px context") }
 
@@ -58,11 +65,7 @@ func writeIcon(pixels: Int, to url: URL) {
     let body = (canvas * bodyRatio).rounded()
     let origin = ((canvas - body) / 2).rounded()
     let rect = CGRect(x: origin, y: origin, width: body, height: body)
-    let radius = body * cornerRatio
 
-    let path = CGPath(roundedRect: rect, cornerWidth: radius, cornerHeight: radius, transform: nil)
-    context.addPath(path)
-    context.clip()
     context.draw(artwork, in: rect)
 
     guard let image = context.makeImage(),
