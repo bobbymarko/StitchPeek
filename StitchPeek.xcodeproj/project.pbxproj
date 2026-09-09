@@ -1,0 +1,600 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E85245304EFDEC43B1C88F12 /* StitchPeekApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D43ED9ECB4EF6CC618253E /* StitchPeekApp.swift */; };
+		32EB0E2C91B18B798F6FE48E /* DesignDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82E42E29BC8D0EA3D15AE91 /* DesignDocument.swift */; };
+		082CF340A766A15F0CA3EF57 /* DocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3CB363D89E43B3D6C2D318 /* DocumentView.swift */; };
+		A7C5728586AD470E1A82CABE /* DesignCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C365C15A63D1948279E7E /* DesignCanvasView.swift */; };
+		A499FDDCDEB17C77601440FE /* InspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BDE08D04E2B7CD2BA813A1 /* InspectorView.swift */; };
+		E36CF942D8CF6A2F57799FED /* ViewerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8059C15191F671CAB8B111 /* ViewerModel.swift */; };
+		DA17EFFB390B09BBCF91DF09 /* Exporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28248A8AE015E0101E04C8B /* Exporter.swift */; };
+		ED7F96CE44EFF1F12943CE5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F819D9E5E248C2BBDD934F4 /* Assets.xcassets */; };
+		BBE3438B4A9110E68EEB2F21 /* StitchKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1F34FF74EDB26BC9CF3CC44D /* StitchKit */; };
+		453F6FDB19321FF8C694C598 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B478A6EA2A0AE72B061CACCB /* PreviewProvider.swift */; };
+		8A38096955AF1AAE00654608 /* StitchKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8B5747D4BA303190A294F8A7 /* StitchKit */; };
+		0B4FB68A3FD79870CD6D4FAA /* ThumbnailProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AEF466EF6931412CE5BA61 /* ThumbnailProvider.swift */; };
+		9212879A135A097975B2799A /* StitchKit in Frameworks */ = {isa = PBXBuildFile; productRef = BE640E5E4D3E09CDD77B1A38 /* StitchKit */; };
+		737BA2D78E393AF5485F157C /* StitchPeekPreview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = FE1574A05EC45FC520BBCAC1 /* StitchPeekPreview.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		605FF1207FBABAEE1BF128C5 /* StitchPeekThumbnail.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 60ADA31DF919285D523B1F30 /* StitchPeekThumbnail.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		ADB9D7032D0989DD292FA1C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ABC8FDB1AB3443D221ADA647;
+			remoteInfo = StitchPeekPreview;
+		};
+		3EE66F584C5689A2933298DB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F4CA3C22B0CDED09977C34CE;
+			remoteInfo = StitchPeekThumbnail;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1AE69368E8CA150A732D3716 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				737BA2D78E393AF5485F157C /* StitchPeekPreview.appex in Embed Foundation Extensions */,
+				605FF1207FBABAEE1BF128C5 /* StitchPeekThumbnail.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		82D43ED9ECB4EF6CC618253E /* StitchPeekApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StitchPeekApp.swift; sourceTree = "<group>"; };
+		E82E42E29BC8D0EA3D15AE91 /* DesignDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignDocument.swift; sourceTree = "<group>"; };
+		3D3CB363D89E43B3D6C2D318 /* DocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentView.swift; sourceTree = "<group>"; };
+		352C365C15A63D1948279E7E /* DesignCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignCanvasView.swift; sourceTree = "<group>"; };
+		D2BDE08D04E2B7CD2BA813A1 /* InspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorView.swift; sourceTree = "<group>"; };
+		9A8059C15191F671CAB8B111 /* ViewerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerModel.swift; sourceTree = "<group>"; };
+		D28248A8AE015E0101E04C8B /* Exporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exporter.swift; sourceTree = "<group>"; };
+		3F819D9E5E248C2BBDD934F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BC252873D45EC4F07B078E1D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		18230653B922F032E5CCA822 /* StitchPeek.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StitchPeek.entitlements; sourceTree = "<group>"; };
+		4FB71EB11B7790A86D8A3F43 /* StitchPeek.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StitchPeek.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B478A6EA2A0AE72B061CACCB /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
+		68DC93011FEFEAF9F6F71980 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		816EB75BCE3D0323FF8B806D /* StitchPeekPreview.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StitchPeekPreview.entitlements; sourceTree = "<group>"; };
+		FE1574A05EC45FC520BBCAC1 /* StitchPeekPreview.appex */ = {isa = PBXFileReference; explicitFileType = wrapper.app-extension; includeInIndex = 0; path = StitchPeekPreview.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8AEF466EF6931412CE5BA61 /* ThumbnailProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailProvider.swift; sourceTree = "<group>"; };
+		94B16CF3D22E9E2EFD378D52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A15B9EF3CE376EF73C5509A5 /* StitchPeekThumbnail.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StitchPeekThumbnail.entitlements; sourceTree = "<group>"; };
+		60ADA31DF919285D523B1F30 /* StitchPeekThumbnail.appex */ = {isa = PBXFileReference; explicitFileType = wrapper.app-extension; includeInIndex = 0; path = StitchPeekThumbnail.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B4DBB04379720FA0AF0310DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BBE3438B4A9110E68EEB2F21 /* StitchKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		74945022832A3A077A53A117 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A38096955AF1AAE00654608 /* StitchKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		709DCCA48FF20C3AF10376E8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9212879A135A097975B2799A /* StitchKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2A44C54E23411059C3A1A1E1 = {
+			isa = PBXGroup;
+			children = (
+				A7B70F215944EE98A57C3A8C /* StitchPeek */,
+				D024606E9AD9FA469DC6F8EE /* StitchPeekPreview */,
+				E9C99C06F014559BB8AEE27C /* StitchPeekThumbnail */,
+				433D647A17039DC680DEAE8F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		433D647A17039DC680DEAE8F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4FB71EB11B7790A86D8A3F43 /* StitchPeek.app */,
+				FE1574A05EC45FC520BBCAC1 /* StitchPeekPreview.appex */,
+				60ADA31DF919285D523B1F30 /* StitchPeekThumbnail.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A7B70F215944EE98A57C3A8C /* StitchPeek */ = {
+			isa = PBXGroup;
+			children = (
+				82D43ED9ECB4EF6CC618253E /* StitchPeekApp.swift */,
+				E82E42E29BC8D0EA3D15AE91 /* DesignDocument.swift */,
+				3D3CB363D89E43B3D6C2D318 /* DocumentView.swift */,
+				352C365C15A63D1948279E7E /* DesignCanvasView.swift */,
+				D2BDE08D04E2B7CD2BA813A1 /* InspectorView.swift */,
+				9A8059C15191F671CAB8B111 /* ViewerModel.swift */,
+				D28248A8AE015E0101E04C8B /* Exporter.swift */,
+				3F819D9E5E248C2BBDD934F4 /* Assets.xcassets */,
+				BC252873D45EC4F07B078E1D /* Info.plist */,
+				18230653B922F032E5CCA822 /* StitchPeek.entitlements */,
+			);
+			path = StitchPeek;
+			sourceTree = "<group>";
+		};
+		D024606E9AD9FA469DC6F8EE /* StitchPeekPreview */ = {
+			isa = PBXGroup;
+			children = (
+				B478A6EA2A0AE72B061CACCB /* PreviewProvider.swift */,
+				68DC93011FEFEAF9F6F71980 /* Info.plist */,
+				816EB75BCE3D0323FF8B806D /* StitchPeekPreview.entitlements */,
+			);
+			path = StitchPeekPreview;
+			sourceTree = "<group>";
+		};
+		E9C99C06F014559BB8AEE27C /* StitchPeekThumbnail */ = {
+			isa = PBXGroup;
+			children = (
+				F8AEF466EF6931412CE5BA61 /* ThumbnailProvider.swift */,
+				94B16CF3D22E9E2EFD378D52 /* Info.plist */,
+				A15B9EF3CE376EF73C5509A5 /* StitchPeekThumbnail.entitlements */,
+			);
+			path = StitchPeekThumbnail;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E8C42BBED5DC9402E6724DAA /* StitchPeek */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 52D59E74507E41266B49930B /* Build configuration list for PBXNativeTarget "StitchPeek" */;
+			buildPhases = (
+				05891991BC3BCE2676C2BDA7 /* Sources */,
+				B4DBB04379720FA0AF0310DD /* Frameworks */,
+				D350EE375F93C3FBE7D6AFF2 /* Resources */,
+				1AE69368E8CA150A732D3716 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				553D1405DD11A4CC4C529509 /* PBXTargetDependency */,
+				E4B35C7F0CEC685B4C03C7FD /* PBXTargetDependency */,
+			);
+			name = StitchPeek;
+			packageProductDependencies = (
+				1F34FF74EDB26BC9CF3CC44D /* StitchKit */,
+			);
+			productName = StitchPeek;
+			productReference = 4FB71EB11B7790A86D8A3F43 /* StitchPeek.app */;
+			productType = "com.apple.product-type.application";
+		};
+		ABC8FDB1AB3443D221ADA647 /* StitchPeekPreview */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0B6BDB14049B19A13906EE52 /* Build configuration list for PBXNativeTarget "StitchPeekPreview" */;
+			buildPhases = (
+				9F46AEC1A6C4979ECFF796CB /* Sources */,
+				74945022832A3A077A53A117 /* Frameworks */,
+				2FAF71EC59971AEE94F1C002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StitchPeekPreview;
+			packageProductDependencies = (
+				8B5747D4BA303190A294F8A7 /* StitchKit */,
+			);
+			productName = StitchPeekPreview;
+			productReference = FE1574A05EC45FC520BBCAC1 /* StitchPeekPreview.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		F4CA3C22B0CDED09977C34CE /* StitchPeekThumbnail */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BCBDD811D4828039CFB8BF45 /* Build configuration list for PBXNativeTarget "StitchPeekThumbnail" */;
+			buildPhases = (
+				233EA4B9FBB9DCEBFE7683B9 /* Sources */,
+				709DCCA48FF20C3AF10376E8 /* Frameworks */,
+				302AC6F1D5FEB7CD55E71431 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StitchPeekThumbnail;
+			packageProductDependencies = (
+				BE640E5E4D3E09CDD77B1A38 /* StitchKit */,
+			);
+			productName = StitchPeekThumbnail;
+			productReference = 60ADA31DF919285D523B1F30 /* StitchPeekThumbnail.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2650;
+				LastUpgradeCheck = 2650;
+				TargetAttributes = {
+					E8C42BBED5DC9402E6724DAA = {
+						CreatedOnToolsVersion = 26.5;
+					};
+					ABC8FDB1AB3443D221ADA647 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+					F4CA3C22B0CDED09977C34CE = {
+						CreatedOnToolsVersion = 26.5;
+					};
+				};
+			};
+			buildConfigurationList = 887D4B5F61EA6AAAF609F3AC /* Build configuration list for PBXProject "StitchPeek" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2A44C54E23411059C3A1A1E1;
+			packageReferences = (
+				ABCA28A0EF8CCEC2CA70297A /* XCLocalSwiftPackageReference "Packages/StitchKit" */,
+			);
+			productRefGroup = 433D647A17039DC680DEAE8F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E8C42BBED5DC9402E6724DAA /* StitchPeek */,
+				ABC8FDB1AB3443D221ADA647 /* StitchPeekPreview */,
+				F4CA3C22B0CDED09977C34CE /* StitchPeekThumbnail */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D350EE375F93C3FBE7D6AFF2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED7F96CE44EFF1F12943CE5E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FAF71EC59971AEE94F1C002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		302AC6F1D5FEB7CD55E71431 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		05891991BC3BCE2676C2BDA7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E85245304EFDEC43B1C88F12 /* StitchPeekApp.swift in Sources */,
+				32EB0E2C91B18B798F6FE48E /* DesignDocument.swift in Sources */,
+				082CF340A766A15F0CA3EF57 /* DocumentView.swift in Sources */,
+				A7C5728586AD470E1A82CABE /* DesignCanvasView.swift in Sources */,
+				A499FDDCDEB17C77601440FE /* InspectorView.swift in Sources */,
+				E36CF942D8CF6A2F57799FED /* ViewerModel.swift in Sources */,
+				DA17EFFB390B09BBCF91DF09 /* Exporter.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F46AEC1A6C4979ECFF796CB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				453F6FDB19321FF8C694C598 /* PreviewProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		233EA4B9FBB9DCEBFE7683B9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B4FB68A3FD79870CD6D4FAA /* ThumbnailProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		553D1405DD11A4CC4C529509 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ABC8FDB1AB3443D221ADA647 /* StitchPeekPreview */;
+			targetProxy = ADB9D7032D0989DD292FA1C7 /* PBXContainerItemProxy */;
+		};
+		E4B35C7F0CEC685B4C03C7FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F4CA3C22B0CDED09977C34CE /* StitchPeekThumbnail */;
+			targetProxy = 3EE66F584C5689A2933298DB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A1FEF218C4C57CE118AD5A8A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		D49EF4AC7029FD1A8C1140E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		40999CE5EDE8252264444DC2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = StitchPeek/StitchPeek.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StitchPeek/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		9793E1AEC63A692C59C07D66 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = StitchPeek/StitchPeek.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StitchPeek/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		12AC55AAA30A4FB075B5DE00 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = StitchPeekPreview/StitchPeekPreview.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StitchPeekPreview/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek.Preview;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		360F884CF2E3D52811449D82 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = StitchPeekPreview/StitchPeekPreview.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StitchPeekPreview/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek.Preview;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		2B979BF6DD6724F045336F9E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = StitchPeekThumbnail/StitchPeekThumbnail.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StitchPeekThumbnail/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek.Thumbnail;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		79E31CC595AC7816EEF0C6FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = StitchPeekThumbnail/StitchPeekThumbnail.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StitchPeekThumbnail/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek.Thumbnail;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		887D4B5F61EA6AAAF609F3AC /* Build configuration list for PBXProject "StitchPeek" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1FEF218C4C57CE118AD5A8A /* Debug */,
+				D49EF4AC7029FD1A8C1140E0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		52D59E74507E41266B49930B /* Build configuration list for PBXNativeTarget "StitchPeek" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				40999CE5EDE8252264444DC2 /* Debug */,
+				9793E1AEC63A692C59C07D66 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0B6BDB14049B19A13906EE52 /* Build configuration list for PBXNativeTarget "StitchPeekPreview" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12AC55AAA30A4FB075B5DE00 /* Debug */,
+				360F884CF2E3D52811449D82 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BCBDD811D4828039CFB8BF45 /* Build configuration list for PBXNativeTarget "StitchPeekThumbnail" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2B979BF6DD6724F045336F9E /* Debug */,
+				79E31CC595AC7816EEF0C6FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		ABCA28A0EF8CCEC2CA70297A /* XCLocalSwiftPackageReference "Packages/StitchKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/StitchKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1F34FF74EDB26BC9CF3CC44D /* StitchKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StitchKit;
+		};
+		8B5747D4BA303190A294F8A7 /* StitchKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StitchKit;
+		};
+		BE640E5E4D3E09CDD77B1A38 /* StitchKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StitchKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+}

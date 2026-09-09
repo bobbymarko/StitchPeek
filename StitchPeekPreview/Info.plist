@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>XPC!</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<!-- No NSExtensionMainStoryboard. A storyboard key alongside a principal class is a
+	     classic silent failure: the extension loads nothing and reports no error. -->
+	<key>NSExtension</key>
+	<dict>
+		<key>NSExtensionPointIdentifier</key>
+		<string>com.apple.quicklook.preview</string>
+		<key>NSExtensionPrincipalClass</key>
+		<string>$(PRODUCT_MODULE_NAME).PreviewProvider</string>
+		<key>NSExtensionAttributes</key>
+		<dict>
+			<!-- Required for a data-based provider. Without it Quick Look treats the
+			     extension as the view-based kind, looks for a view controller, and never
+			     instantiates QLPreviewProvider at all — the extension loads and silently
+			     does nothing, with no error anywhere. Apple's own data-based preview
+			     extension (QLPreviewGenerationExtension.appex) sets the same key. -->
+			<key>QLIsDataBasedPreview</key>
+			<true/>
+			<!-- Both identifiers: whichever one LaunchServices resolves a given .dst to,
+			     this generator is offered. Embrilliance exports com.britonleap.dst and wins
+			     that resolution when it is installed. It ships no Quick Look plugins of its
+			     own, so there is nothing to compete with here. -->
+			<key>QLSupportedContentTypes</key>
+			<array>
+				<string>com.bobbymarko.stitchpeek.tajima-dst</string>
+				<string>com.britonleap.dst</string>
+			</array>
+			<key>QLSupportsSearchableItems</key>
+			<false/>
+		</dict>
+	</dict>
+</dict>
+</plist>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.graphics-design</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>NSHumanReadableCopyright</key>
+	<string></string>
+
+	<!-- There is no system UTI for .dst, so StitchPeek declares one. This lives in the host
+	     app only; both extensions merely reference the identifier.
+
+	     Exported rather than Imported: strictly .dst is Tajima's format, so Imported is the
+	     pedantically correct key, but nothing else on this system claims the type and
+	     Exported ranks higher in LaunchServices. If .dst previews ever start resolving to
+	     another app, this ranking is the first thing to look at. -->
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.bobbymarko.stitchpeek.tajima-dst</string>
+			<key>UTTypeDescription</key>
+			<string>Tajima Embroidery Design</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>dst</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+
+	<!-- Embrilliance (com.britonleap.Embrilliance) also exports a type for .dst, and on a
+	     machine where it is installed LaunchServices resolves .dst to com.britonleap.dst
+	     rather than to the declaration above — so supporting only our own identifier means
+	     the Quick Look extensions are simply never asked. Importing the type here makes
+	     `UTType("com.britonleap.dst")` resolve even if Embrilliance is later removed. -->
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.britonleap.dst</string>
+			<key>UTTypeDescription</key>
+			<string>Tajima Embroidery Design</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>dst</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Tajima Embroidery Design</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.bobbymarko.stitchpeek.tajima-dst</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Tajima Embroidery Design</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<!-- Alternate, not Owner: Embrilliance is the editor on this machine and stealing
+			     its default handler is not StitchPeek's call to make. To make StitchPeek the
+			     default anyway, change this to Owner, or set it in Finder's Get Info panel. -->
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.britonleap.dst</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

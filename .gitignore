@@ -1,0 +1,15 @@
+# Build products
+build/
+.build/
+DerivedData/
+*.xcuserdatad
+xcuserdata/
+.DS_Store
+
+# The generated project's per-user state; project.pbxproj itself is tracked.
+StitchPeek.xcodeproj/project.xcworkspace/xcuserdata/
+StitchPeek.xcodeproj/xcuserdata/
+__pycache__/
+
+# Local Claude Code workspace config
+.claude/
