@@ -304,7 +304,7 @@ final class Library {
                 switch result {
                 case .success(let design):
                     collection.designs.append(OpenDesign(url: url, design: design))
-                    NSDocumentController.shared.noteNewRecentDocumentURL(url)
+                    RecentDocuments.shared.note(url)
                 case .failure(let error):
                     collection.failures.append(.init(url: url, message: error.localizedDescription))
                 }

@@ -6,5 +6,9 @@
 	<true/>
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
+	<!-- Open Recent keeps security-scoped bookmarks, which is the only thing that carries
+	     the sandbox's access to a user-opened file across a relaunch. -->
+	<key>com.apple.security.files.bookmarks.app-scope</key>
+	<true/>
 </dict>
 </plist>

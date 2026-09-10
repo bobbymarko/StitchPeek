@@ -242,7 +242,10 @@ The index has two arrangements, switched from the toolbar:
 
 Click a design to go into the viewer; the back button returns to the index. In the viewer,
 ← and → step through the batch without going back out. Right-click a tile to reveal it in
-Finder or drop it from the window; ＋ adds more files to the batch.
+Finder or drop it from the window; ＋ adds more files to the batch. *File → Open Recent* is
+the app's own list, kept as security-scoped bookmarks — `NSDocumentController` records
+nothing for a sandboxed app without `NSDocument`, and a bookmark is the only thing that
+carries the sandbox's access to a user-opened file across a relaunch.
 
 **Export Sheet** (PDF or PNG) prints the whole batch in the current arrangement — the
 bulk-order handout. PDF paginates (twelve designs a page in the grid, five in the filmstrip)

@@ -36,18 +36,18 @@ struct StitchPeekApp: App {
     }
 }
 
-/// `DocumentGroup` used to provide this for free; without it the list has to be read from
-/// `NSDocumentController`, which still records what we open and keeps the sandbox access.
+/// `DocumentGroup` used to provide this for free. See `RecentDocuments` for why the list is
+/// the app's own rather than `NSDocumentController`'s.
 private struct RecentDocumentsMenu: View {
     var body: some View {
-        let recent = NSDocumentController.shared.recentDocumentURLs
+        let recents = RecentDocuments.shared
         Menu("Open Recent") {
-            ForEach(recent, id: \.self) { url in
+            ForEach(recents.urls, id: \.self) { url in
                 Button(url.lastPathComponent) { Library.shared.open([url]) }
             }
-            if !recent.isEmpty { Divider() }
-            Button("Clear Menu") { NSDocumentController.shared.clearRecentDocuments(nil) }
-                .disabled(recent.isEmpty)
+            if !recents.urls.isEmpty { Divider() }
+            Button("Clear Menu") { recents.clear() }
+                .disabled(recents.urls.isEmpty)
         }
     }
 }

@@ -32,7 +32,7 @@ TARGETS = {
             "StitchPeekApp.swift", "AppDelegate.swift", "Library.swift",
             "CollectionWindow.swift", "IndexView.swift", "DetailView.swift",
             "DesignCanvasView.swift", "InspectorView.swift", "ViewerModel.swift",
-            "Exporter.swift", "PDFReport.swift", "ContactSheet.swift", "ReportText.swift",
+            "Exporter.swift", "PDFReport.swift", "ContactSheet.swift", "ReportText.swift", "RecentDocuments.swift",
         ],
         "resources": ["Assets.xcassets"],
         "product": "StitchPeek.app",
