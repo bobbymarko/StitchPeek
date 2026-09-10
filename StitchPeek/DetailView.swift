@@ -1,29 +1,20 @@
 import StitchKit
 import SwiftUI
 
-struct DocumentView: View {
-    @State private var model: ViewerModel
+/// The viewer for one design: canvas, inspector, scrubber. Reached from the index, with
+/// previous/next to step through a batch without going back out.
+struct DetailView: View {
+    let collection: DesignCollection
+    let openDesign: OpenDesign
     @State private var showsInspector = true
-    private let fileURL: URL?
 
     /// 60 Hz drive for the stitch scrubber's playback.
     private let tick = Timer.publish(every: 1.0 / 60.0, on: .main, in: .common).autoconnect()
 
-    init(document: DesignDocument, fileURL: URL?) {
-        _model = State(initialValue: ViewerModel(design: document.design))
-        self.fileURL = fileURL
-    }
-
-    /// The source file's own name, for the report header.
-    private var documentName: String {
-        fileURL?.lastPathComponent ?? (model.design.name.map { "\($0).dst" } ?? "Design.dst")
-    }
-
-    private var baseName: String {
-        fileURL?.deletingPathExtension().lastPathComponent
-            ?? model.design.name
-            ?? "Design"
-    }
+    private var model: ViewerModel { openDesign.model }
+    private var position: Int { (collection.index(of: openDesign.id) ?? 0) + 1 }
+    private var previous: OpenDesign? { collection.neighbor(of: openDesign.id, offset: -1) }
+    private var next: OpenDesign? { collection.neighbor(of: openDesign.id, offset: 1) }
 
     var body: some View {
         DesignCanvasView(model: model)
@@ -34,9 +25,13 @@ struct DocumentView: View {
                 InspectorView(model: model)
                     .inspectorColumnWidth(min: 240, ideal: 280, max: 380)
             }
-            .navigationTitle(baseName)
+            .navigationTitle(openDesign.displayName)
+            .navigationSubtitle(collection.designs.count > 1
+                                ? "\(position) of \(collection.designs.count)  ·  \(model.design.stitchCount.formatted()) stitches"
+                                : "\(model.design.stitchCount.formatted()) stitches")
             .onReceive(tick) { _ in model.advancePlayback() }
             .background(hiddenShortcuts)
+            .id(openDesign.id)      // fresh canvas state when stepping to a neighbour
     }
 
     // MARK: - Scrubber
@@ -73,6 +68,17 @@ struct DocumentView: View {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
+        if collection.designs.count > 1 {
+            ToolbarItemGroup(placement: .navigation) {
+                Button("Previous", systemImage: "chevron.left") { step(to: previous) }
+                    .disabled(previous == nil)
+                    .help("Previous design (←)")
+                Button("Next", systemImage: "chevron.right") { step(to: next) }
+                    .disabled(next == nil)
+                    .help("Next design (→)")
+            }
+        }
+
         ToolbarItemGroup {
             Button("Fit", systemImage: "arrow.up.left.and.arrow.down.right") { model.fit() }
                 .help("Fit to window (⌘0)")
@@ -91,19 +97,27 @@ struct DocumentView: View {
             .help("Show jump stitches (J)")
 
             Menu {
-                Button("Export Report as PDF…") {
-                    Exporter.export(model: model, suggestedName: baseName + ".pdf",
-                                    documentName: documentName, format: .pdf)
-                }
-                Button("Export View as PNG…") {
-                    Exporter.export(model: model, suggestedName: baseName + ".png",
-                                    documentName: documentName, format: .png)
-                }
+                Button("Export Report as PDF…") { export(.pdf) }
+                Button("Export View as PNG…") { export(.png) }
             } label: {
                 Label("Export", systemImage: "square.and.arrow.up")
             }
-            .help("Export the current view (⌘E)")
+            .help("Export this design (⌘E)")
         }
+    }
+
+    private func step(to target: OpenDesign?) {
+        guard let target else { return }
+        collection.path = [target.id]
+    }
+
+    private func export(_ format: Exporter.Format) {
+        Exporter.export(
+            model: model,
+            suggestedName: openDesign.displayName + (format == .pdf ? ".pdf" : ".png"),
+            documentName: openDesign.filename,
+            format: format
+        )
     }
 
     /// Keyboard shortcuts, parked on zero-sized buttons so they work whenever this window is
@@ -116,11 +130,12 @@ struct DocumentView: View {
                 .keyboardShortcut("1", modifiers: .command)
             Button("") { model.showsJumps.toggle() }
                 .keyboardShortcut("j", modifiers: [])
-            Button("") {
-                Exporter.export(model: model, suggestedName: baseName + ".pdf",
-                                documentName: documentName, format: .pdf)
-            }
-            .keyboardShortcut("e", modifiers: .command)
+            Button("") { export(.pdf) }
+                .keyboardShortcut("e", modifiers: .command)
+            Button("") { step(to: previous) }
+                .keyboardShortcut(.leftArrow, modifiers: [])
+            Button("") { step(to: next) }
+                .keyboardShortcut(.rightArrow, modifiers: [])
         }
         .opacity(0)
         .frame(width: 0, height: 0)

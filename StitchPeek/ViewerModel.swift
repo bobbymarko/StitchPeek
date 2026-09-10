@@ -136,6 +136,8 @@ final class ViewerModel {
 
     /// Blocks the user has re-colored, so the reset affordance can be offered.
     private(set) var recoloredBlocks: Set<Int> = []
+    /// Bumped on every colour change, so cached thumbnails know to re-render.
+    private(set) var colorVersion = 0
 
     func color(ofBlock index: Int) -> StitchColor? {
         design.blocks.indices.contains(index) ? design.blocks[index].color : nil
@@ -148,6 +150,7 @@ final class ViewerModel {
         if interactiveDesign.blocks.indices.contains(index) {
             interactiveDesign.blocks[index].color = color
         }
+        colorVersion += 1
         if color == Palette.color(at: index) {
             recoloredBlocks.remove(index)
         } else {

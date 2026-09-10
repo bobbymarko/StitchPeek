@@ -42,6 +42,33 @@ enum Exporter {
         }
     }
 
+    /// Exports a whole window's index as one sheet: a contact-sheet grid, or a filmstrip
+    /// list with the numbers beside each design. This is the bulk-order handout.
+    static func exportSheet(
+        items: [ContactSheet.Item],
+        layout: IndexLayout,
+        title: String,
+        suggestedName: String,
+        format: Format
+    ) {
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [format.contentType]
+        panel.nameFieldStringValue = suggestedName + (format == .pdf ? ".pdf" : ".png")
+        panel.canCreateDirectories = true
+
+        panel.begin { response in
+            guard response == .OK, let url = panel.url else { return }
+            do {
+                switch format {
+                case .pdf: try ContactSheet.writePDF(items: items, layout: layout, title: title, to: url)
+                case .png: try ContactSheet.writePNG(items: items, layout: layout, title: title, to: url)
+                }
+            } catch {
+                NSAlert(error: error).runModal()
+            }
+        }
+    }
+
     private enum ExportError: LocalizedError {
         case contextUnavailable
         case writeFailed

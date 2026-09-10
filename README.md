@@ -5,8 +5,9 @@ embroidery files.
 
 - **Quick Look preview** — spacebar a `.dst` in Finder and see the stitched design.
 - **Finder thumbnails** — `.dst` files show the design as their icon.
-- **Viewer app** — pan/zoom, per-color-block isolation, a stitch scrubber, a stats panel,
-  recolorable blocks, and PDF/PNG export.
+- **Viewer app** — open a whole batch at once and get a contact sheet or filmstrip of every
+  design; click into one for pan/zoom, per-color-block isolation, a stitch scrubber, a stats
+  panel and recolorable blocks; export the batch as a printable sheet for bulk orders.
 
 ![A 220,000-stitch spiral rendered by StitchKit](Design/example-render.png)
 
@@ -226,6 +227,42 @@ If a rebuild's behavior doesn't change, `killall quicklookd` — it holds onto a
 of the extension.
 
 ---
+
+## Batches, the index, and the viewer
+
+Open one file and you land in the viewer. Open several — select them in Finder and open
+them together, or ⌘O with multiple selection, or drop them on a window — and you land in an
+**index** of that batch first. This is Preview.app's model: each open action becomes one
+window holding that batch, and an empty window that is already showing is reused.
+
+The index has two arrangements, switched from the toolbar:
+
+- **Grid** — a contact sheet of tiles, name and size under each.
+- **Filmstrip** — one design per row with a larger preview and the full numbers beside it.
+
+Click a design to go into the viewer; the back button returns to the index. In the viewer,
+← and → step through the batch without going back out. Right-click a tile to reveal it in
+Finder or drop it from the window; ＋ adds more files to the batch.
+
+**Export Sheet** (PDF or PNG) prints the whole batch in the current arrangement — the
+bulk-order handout. PDF paginates (twelve designs a page in the grid, five in the filmstrip)
+with a running total in the header; PNG is one tall image of everything.
+
+Under the hood this replaced `DocumentGroup` with a `WindowGroup` keyed by batch and an
+`NSApplicationDelegate` receiving files. Three things bit on the way and are worth knowing
+if you touch it:
+
+- The scene must opt out of URL handling (`handlesExternalEvents(matching: [])`), or
+  SwiftUI spawns a window per file on top of the delegate call. Three files became five
+  windows.
+- When the app is launched *to open files*, SwiftUI creates no window at all — the delegate
+  gets the batch and nothing would ever show it. `openWindow` is only handed out through the
+  environment, so the app captures it at the first `scenePhase` change and opens the window
+  itself, checking that it actually appeared. This was masked for a while by the next item.
+- The windows are made non-restorable (`NSWindow.isRestorable = false`; the scene modifier
+  for this only arrived in macOS 15). A batch is not persisted, so a window restored from a
+  previous launch points at nothing — and AppKit only rewrites its restoration record on a
+  clean quit, so stale entries survive any amount of cache clearing until one happens.
 
 ## Colors and export
 

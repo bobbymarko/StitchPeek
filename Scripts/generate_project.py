@@ -29,9 +29,10 @@ THUMBNAIL = "StitchPeekThumbnail"
 TARGETS = {
     APP: {
         "sources": [
-            "StitchPeekApp.swift", "DesignDocument.swift", "DocumentView.swift",
+            "StitchPeekApp.swift", "AppDelegate.swift", "Library.swift",
+            "CollectionWindow.swift", "IndexView.swift", "DetailView.swift",
             "DesignCanvasView.swift", "InspectorView.swift", "ViewerModel.swift",
-            "Exporter.swift", "PDFReport.swift",
+            "Exporter.swift", "PDFReport.swift", "ContactSheet.swift", "ReportText.swift",
         ],
         "resources": ["Assets.xcassets"],
         "product": "StitchPeek.app",
