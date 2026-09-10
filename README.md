@@ -6,7 +6,7 @@ embroidery files.
 - **Quick Look preview** — spacebar a `.dst` in Finder and see the stitched design.
 - **Finder thumbnails** — `.dst` files show the design as their icon.
 - **Viewer app** — pan/zoom, per-color-block isolation, a stitch scrubber, a stats panel,
-  and PDF/PNG export.
+  recolorable blocks, and PDF/PNG export.
 
 ![A 220,000-stitch spiral rendered by StitchKit](Design/example-render.png)
 
@@ -226,6 +226,29 @@ If a rebuild's behavior doesn't change, `killall quicklookd` — it holds onto a
 of the extension.
 
 ---
+
+## Colors and export
+
+DST stores no color information, only "change color here", so block colors come from
+`Palette` in stitching order. **Click a swatch in the inspector to change one.** Because the
+file has no colors to change, a recolor is a display choice, not an edit: nothing is written
+back and nothing is persisted, so reopening the file returns to the palette assignment.
+Right-click a block to reset it, or use *Reset Colors* in the section header.
+
+The two exports differ on purpose:
+
+- **PDF (⌘E)** is a one-page report — the whole design over a table of its statistics:
+  dimensions in inches and mm, stitch/jump/trim counts, estimated thread and bobbin
+  consumption, estimated run time, and a per-block breakdown with swatches.
+- **PNG** is exactly what is on screen, at the current pan and zoom.
+
+Both honour the viewer's toggles (isolated block, jump overlay, stitch limit).
+
+Thread length is measured from the run geometry. Bobbin consumption is the usual
+one-third-of-top rule, and run time assumes 650 stitches per minute; both are labelled as
+estimates in the report because DST records neither. Checked against another DST tool's
+report for the same file, the stitch count, dimensions, trim count, thread length and bobbin
+figures all agree.
 
 ## Licence
 

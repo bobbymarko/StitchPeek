@@ -467,3 +467,38 @@ func writePNG(_ image: CGImage, to url: URL) throws {
     CGImageDestinationAddImage(destination, image, nil)
     CGImageDestinationFinalize(destination)
 }
+
+// MARK: - Derived statistics
+
+@Suite("Derived statistics")
+struct DerivedStatisticsTests {
+
+    /// A 10-unit horizontal step per stitch: five stitches is four 1 mm segments.
+    @Test("Thread length is the summed run geometry, excluding jumps")
+    func threadLength() throws {
+        var data = Data(count: 512)
+        // Each record steps +10 units (1 mm) in x: b0 bit0 is x+1 and bit2 is x+9.
+        // b1 must stay clear — its bit0 would add a further x+3.
+        func step(_ command: UInt8) -> [UInt8] { [0x05, 0x00, command | 0x03] }
+        for _ in 0..<5 { data.append(contentsOf: step(0x00)) }   // 5 stitches, 4 segments
+        data.append(contentsOf: step(0x80))                      // a jump: not thread
+        for _ in 0..<3 { data.append(contentsOf: step(0x00)) }   // 3 stitches, 2 segments
+        data.append(contentsOf: [0x00, 0x00, 0xF3])
+
+        let design = try DSTParser.parse(data: data)
+        #expect(design.stitchCount == 8)
+        // 6 segments of 1 mm; the jump gap is not counted.
+        #expect(abs(design.threadLengthMM - 6.0) < 0.001)
+        #expect(abs(design.estimatedBobbinLengthMM - 2.0) < 0.001)
+    }
+
+    @Test("Run time scales with machine speed")
+    func runTime() throws {
+        let design = try DSTParser.parse(contentsOf: Fixtures.url("multicolor.dst"))
+        let fast = design.estimatedRunTime(stitchesPerMinute: 1000)
+        let slow = design.estimatedRunTime(stitchesPerMinute: 500)
+        #expect(abs(slow - fast * 2) < 0.001)
+        #expect(abs(fast - Double(design.stitchCount) / 1000 * 60) < 0.001)
+        #expect(design.estimatedRunTime(stitchesPerMinute: 0) == 0)
+    }
+}

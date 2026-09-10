@@ -31,7 +31,7 @@ TARGETS = {
         "sources": [
             "StitchPeekApp.swift", "DesignDocument.swift", "DocumentView.swift",
             "DesignCanvasView.swift", "InspectorView.swift", "ViewerModel.swift",
-            "Exporter.swift",
+            "Exporter.swift", "PDFReport.swift",
         ],
         "resources": ["Assets.xcassets"],
         "product": "StitchPeek.app",

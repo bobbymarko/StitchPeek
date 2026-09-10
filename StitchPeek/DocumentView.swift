@@ -14,6 +14,11 @@ struct DocumentView: View {
         self.fileURL = fileURL
     }
 
+    /// The source file's own name, for the report header.
+    private var documentName: String {
+        fileURL?.lastPathComponent ?? (model.design.name.map { "\($0).dst" } ?? "Design.dst")
+    }
+
     private var baseName: String {
         fileURL?.deletingPathExtension().lastPathComponent
             ?? model.design.name
@@ -86,11 +91,13 @@ struct DocumentView: View {
             .help("Show jump stitches (J)")
 
             Menu {
-                Button("Export as PDF…") {
-                    Exporter.export(model: model, suggestedName: baseName + ".pdf", format: .pdf)
+                Button("Export Report as PDF…") {
+                    Exporter.export(model: model, suggestedName: baseName + ".pdf",
+                                    documentName: documentName, format: .pdf)
                 }
-                Button("Export as PNG…") {
-                    Exporter.export(model: model, suggestedName: baseName + ".png", format: .png)
+                Button("Export View as PNG…") {
+                    Exporter.export(model: model, suggestedName: baseName + ".png",
+                                    documentName: documentName, format: .png)
                 }
             } label: {
                 Label("Export", systemImage: "square.and.arrow.up")
@@ -110,7 +117,8 @@ struct DocumentView: View {
             Button("") { model.showsJumps.toggle() }
                 .keyboardShortcut("j", modifiers: [])
             Button("") {
-                Exporter.export(model: model, suggestedName: baseName + ".pdf", format: .pdf)
+                Exporter.export(model: model, suggestedName: baseName + ".pdf",
+                                documentName: documentName, format: .pdf)
             }
             .keyboardShortcut("e", modifiers: .command)
         }

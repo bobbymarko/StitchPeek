@@ -20,8 +20,10 @@ enum Exporter {
         }
     }
 
-    /// Exports exactly what is on screen: same framing, same toggles, same stitch limit.
-    static func export(model: ViewerModel, suggestedName: String, format: Format) {
+    /// PNG exports exactly what is on screen: same framing, same toggles, same stitch limit.
+    /// PDF instead produces a one-page report — the whole design over its statistics — since
+    /// a report of a zoomed-in crop would be no use. Both honour the viewer's toggles.
+    static func export(model: ViewerModel, suggestedName: String, documentName: String, format: Format) {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [format.contentType]
         panel.nameFieldStringValue = suggestedName
@@ -31,7 +33,7 @@ enum Exporter {
             guard response == .OK, let url = panel.url else { return }
             do {
                 switch format {
-                case .pdf: try writePDF(model: model, to: url)
+                case .pdf: try writePDF(model: model, documentName: documentName, to: url)
                 case .png: try writePNG(model: model, to: url)
                 }
             } catch {
@@ -58,15 +60,23 @@ enum Exporter {
         return size
     }
 
-    private static func writePDF(model: ViewerModel, to url: URL) throws {
-        let size = exportSize(model)
-        var mediaBox = CGRect(origin: .zero, size: size)
+    private static func writePDF(model: ViewerModel, documentName: String, to url: URL) throws {
+        var mediaBox = CGRect(origin: .zero, size: PDFReport.pageSize)
+        let info: [String: Any] = [
+            kCGPDFContextTitle as String: documentName,
+            kCGPDFContextCreator as String: "StitchPeek"
+        ]
         guard let consumer = CGDataConsumer(url: url as CFURL),
-              let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil)
+              let context = CGContext(consumer: consumer, mediaBox: &mediaBox, info as CFDictionary)
         else { throw ExportError.contextUnavailable }
 
         context.beginPDFPage(nil)
-        draw(model: model, into: context, size: size)
+        PDFReport.draw(
+            design: model.design,
+            filename: documentName,
+            options: model.renderOptions(showBackground: true),
+            into: context
+        )
         context.endPDFPage()
         context.closePDF()
     }

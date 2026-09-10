@@ -12,10 +12,13 @@ import StitchKit
 @MainActor
 @Observable
 final class ViewerModel {
-    let design: Design
+    /// Mutable so block colors can be re-assigned. DST stores no colors at all, so a
+    /// recolor is a display choice, not an edit to the file — nothing is written back and
+    /// nothing is persisted. Reopening the file returns to the palette assignment.
+    private(set) var design: Design
     /// A decimated copy drawn during live pan and zoom on very large designs, so dragging
     /// stays smooth. The full design is drawn as soon as the gesture settles.
-    let interactiveDesign: Design
+    private(set) var interactiveDesign: Design
 
     var scale: CGFloat = 1
     var center: CGPoint = .zero
@@ -127,6 +130,39 @@ final class ViewerModel {
 
     func toggleIsolation(of index: Int) {
         isolatedBlockIndex = (isolatedBlockIndex == index) ? nil : index
+    }
+
+    // MARK: - Recoloring
+
+    /// Blocks the user has re-colored, so the reset affordance can be offered.
+    private(set) var recoloredBlocks: Set<Int> = []
+
+    func color(ofBlock index: Int) -> StitchColor? {
+        design.blocks.indices.contains(index) ? design.blocks[index].color : nil
+    }
+
+    func setColor(_ color: StitchColor, forBlock index: Int) {
+        guard design.blocks.indices.contains(index) else { return }
+        guard design.blocks[index].color != color else { return }
+        design.blocks[index].color = color
+        if interactiveDesign.blocks.indices.contains(index) {
+            interactiveDesign.blocks[index].color = color
+        }
+        if color == Palette.color(at: index) {
+            recoloredBlocks.remove(index)
+        } else {
+            recoloredBlocks.insert(index)
+        }
+    }
+
+    func resetColor(ofBlock index: Int) {
+        setColor(Palette.color(at: index), forBlock: index)
+    }
+
+    func resetAllColors() {
+        for index in design.blocks.indices {
+            setColor(Palette.color(at: index), forBlock: index)
+        }
     }
 
     // MARK: - Scrubber

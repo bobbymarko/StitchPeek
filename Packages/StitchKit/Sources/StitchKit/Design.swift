@@ -73,6 +73,18 @@ public struct ColorBlock: Sendable {
     /// Bounds of this block's stitches alone, in 0.1 mm units.
     public var bounds: CGRect
 
+    /// Thread laid down by this block, in mm: the summed length of every run.
+    /// Jumps are excluded, since the machine is not stitching across them.
+    public var threadLengthMM: Double {
+        var total: Double = 0
+        for run in runs {
+            for (a, b) in zip(run, run.dropFirst()) {
+                total += Double(hypot(b.x - a.x, b.y - a.y))
+            }
+        }
+        return total / 10.0        // 0.1 mm units to mm
+    }
+
     public init(
         runs: [[CGPoint]],
         jumps: [JumpSegment],
@@ -142,6 +154,22 @@ public struct Design: Sendable {
     public var name: String? {
         guard let raw = header?.label?.trimmingCharacters(in: .whitespaces), !raw.isEmpty else { return nil }
         return raw
+    }
+
+    /// Total thread consumed, in mm. Measured from the run geometry, so a decimated
+    /// design under-reports — decimation is only ever applied to thumbnails.
+    public var threadLengthMM: Double {
+        blocks.reduce(0) { $0 + $1.threadLengthMM }
+    }
+
+    /// Rule of thumb: bobbin thread runs about a third of the top thread.
+    public var estimatedBobbinLengthMM: Double { threadLengthMM / 3.0 }
+
+    /// Stitch-out time at a given machine speed. 650 spm is a typical single-head
+    /// commercial rate and matches the run times other DST tools report.
+    public func estimatedRunTime(stitchesPerMinute: Double = 650) -> TimeInterval {
+        guard stitchesPerMinute > 0 else { return 0 }
+        return Double(stitchCount) / stitchesPerMinute * 60.0
     }
 
     public var widthMM: Double { Double(bounds.width) / 10.0 }
