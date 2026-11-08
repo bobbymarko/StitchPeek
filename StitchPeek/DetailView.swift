@@ -6,6 +6,7 @@ import SwiftUI
 struct DetailView: View {
     let collection: DesignCollection
     let openDesign: OpenDesign
+    let onFeedback: () -> Void
     @State private var showsInspector = true
 
     /// 60 Hz drive for the stitch scrubber's playback.
@@ -80,6 +81,12 @@ struct DetailView: View {
         }
 
         ToolbarItemGroup {
+            Button("Zoom Out", systemImage: "minus.magnifyingglass") { model.zoomOut() }
+                .help("Zoom out (⌘−)")
+
+            Button("Zoom In", systemImage: "plus.magnifyingglass") { model.zoomIn() }
+                .help("Zoom in (⌘+)")
+
             Button("Fit", systemImage: "arrow.up.left.and.arrow.down.right") { model.fit() }
                 .help("Fit to window (⌘0)")
 
@@ -103,6 +110,9 @@ struct DetailView: View {
                 Label("Export", systemImage: "square.and.arrow.up")
             }
             .help("Export this design (⌘E)")
+
+            Button("Feedback", systemImage: "text.bubble") { onFeedback() }
+                .help("Send feedback about what's on screen (⇧⌘F)")
         }
     }
 
@@ -124,10 +134,8 @@ struct DetailView: View {
     /// key without needing focused-value plumbing up into the app's command menus.
     private var hiddenShortcuts: some View {
         ZStack {
-            Button("") { model.fit() }
-                .keyboardShortcut("0", modifiers: .command)
-            Button("") { model.actualSize() }
-                .keyboardShortcut("1", modifiers: .command)
+            // ⌘0 / ⌘1 / ⌘+ / ⌘− live in the View menu (AppCommands.swift). J stays here,
+            // scoped to this window, so it never fires while typing into a sheet.
             Button("") { model.showsJumps.toggle() }
                 .keyboardShortcut("j", modifiers: [])
             Button("") { export(.pdf) }

@@ -75,6 +75,18 @@ final class ViewerModel {
         scale = 1
     }
 
+    /// Keyboard zoom steps, anchored on the middle of the view since there is no cursor
+    /// position to anchor on. Matches the feel of a couple of pinch clicks.
+    static let zoomStep: CGFloat = 1.25
+
+    func zoomIn() {
+        zoom(by: Self.zoomStep, around: CGPoint(x: viewSize.width / 2, y: viewSize.height / 2))
+    }
+
+    func zoomOut() {
+        zoom(by: 1 / Self.zoomStep, around: CGPoint(x: viewSize.width / 2, y: viewSize.height / 2))
+    }
+
     /// Fits once, the first time the canvas reports a real size.
     func fitIfNeeded(viewSize: CGSize) {
         self.viewSize = viewSize

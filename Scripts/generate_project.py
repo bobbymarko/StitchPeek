@@ -33,6 +33,8 @@ TARGETS = {
             "CollectionWindow.swift", "IndexView.swift", "DetailView.swift",
             "DesignCanvasView.swift", "InspectorView.swift", "ViewerModel.swift",
             "Exporter.swift", "PDFReport.swift", "ContactSheet.swift", "ReportText.swift", "RecentDocuments.swift",
+            "AppCommands.swift", "Updater.swift", "Feedback.swift", "FeedbackSheet.swift",
+            "SettingsView.swift",
         ],
         "resources": ["Assets.xcassets"],
         "product": "StitchPeek.app",
@@ -337,6 +339,13 @@ for t in EXTENSIONS:
 \t\t}};''')
 
 # XCBuildConfiguration
+# The single source of truth for the version is the VERSION file at the repo root.
+# Scripts/release.sh bumps it; the build number is derived so it always increases with it.
+_VERSION = open(os.path.join(ROOT, "VERSION")).read().strip()
+_MAJOR, _MINOR, _PATCH = (int(part) for part in _VERSION.split("."))
+MARKETING_VERSION = _VERSION
+BUILD_NUMBER = str(_MAJOR * 10000 + _MINOR * 100 + _PATCH)
+
 PROJECT_COMMON = {
     "ALWAYS_SEARCH_USER_PATHS": "NO",
     "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
@@ -381,11 +390,11 @@ def target_settings(t):
     settings = {
         "CODE_SIGN_ENTITLEMENTS": f"{t}/{t}.entitlements",
         "COMBINE_HIDPI_IMAGES": "YES",
-        "CURRENT_PROJECT_VERSION": "1",
+        "CURRENT_PROJECT_VERSION": BUILD_NUMBER,
         "ENABLE_PREVIEWS": "YES",
         "GENERATE_INFOPLIST_FILE": "NO",
         "INFOPLIST_FILE": f"{t}/Info.plist",
-        "MARKETING_VERSION": "1.0",
+        "MARKETING_VERSION": MARKETING_VERSION,
         "PRODUCT_BUNDLE_IDENTIFIER": spec["bundle_id"],
         "PRODUCT_NAME": '"$(TARGET_NAME)"',
         "SWIFT_EMIT_LOC_STRINGS": "YES",

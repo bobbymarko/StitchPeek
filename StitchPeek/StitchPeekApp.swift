@@ -32,6 +32,12 @@ struct StitchPeekApp: App {
                     .keyboardShortcut("o", modifiers: .command)
                 RecentDocumentsMenu()
             }
+            ViewCommands()
+            AppMenuCommands()
+        }
+
+        Settings {
+            SettingsView()
         }
     }
 }

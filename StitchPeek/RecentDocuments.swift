@@ -3,11 +3,10 @@ import Observation
 
 /// Open Recent, kept by the app itself.
 ///
-/// `NSDocumentController.noteNewRecentDocumentURL` records nothing for a sandboxed app
-/// with no `NSDocument` subclass — checked: nothing in the shared file list and no
-/// `NSRecentDocumentRecords` in defaults. A plain URL would be no use after relaunch
-/// anyway: the sandbox grants access to a user-opened file only for that session, and a
-/// security-scoped bookmark is what carries the grant across launches.
+/// `NSDocumentController.noteNewRecentDocumentURL` records nothing for an app with no
+/// `NSDocument` subclass — checked: nothing in the shared file list and no
+/// `NSRecentDocumentRecords` in defaults. Entries are bookmarks rather than paths so a
+/// design that is moved or renamed in Finder stays in the list.
 @MainActor
 @Observable
 final class RecentDocuments {
@@ -39,7 +38,7 @@ final class RecentDocuments {
         }
 
         guard let bookmark = try? url.bookmarkData(
-            options: .withSecurityScope,
+            options: [],
             includingResourceValuesForKeys: nil,
             relativeTo: nil
         ) else { return }
@@ -69,7 +68,7 @@ final class RecentDocuments {
             // still resolves — the file moved — and is kept as is.
             guard let url = try? URL(
                 resolvingBookmarkData: data,
-                options: .withSecurityScope,
+                options: [],
                 relativeTo: nil,
                 bookmarkDataIsStale: &isStale
             ) else { continue }

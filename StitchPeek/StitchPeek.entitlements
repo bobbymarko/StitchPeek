@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- The host app is deliberately NOT sandboxed: it updates itself in place (Updater.swift),
+     and a sandboxed app may not replace its own bundle in /Applications. The two Quick Look
+     extensions, which handle files from anywhere on the system, stay sandboxed — see their
+     own entitlements. Updates are only installed after an Ed25519 signature check against a
+     key that lives off-repo, which is what stands in for the protection given up here. -->
 <plist version="1.0">
-<dict>
-	<key>com.apple.security.app-sandbox</key>
-	<true/>
-	<key>com.apple.security.files.user-selected.read-write</key>
-	<true/>
-	<!-- Open Recent keeps security-scoped bookmarks, which is the only thing that carries
-	     the sandbox's access to a user-opened file across a relaunch. -->
-	<key>com.apple.security.files.bookmarks.app-scope</key>
-	<true/>
-</dict>
+<dict/>
 </plist>

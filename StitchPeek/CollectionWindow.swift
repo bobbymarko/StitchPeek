@@ -39,18 +39,27 @@ struct CollectionWindow: View {
     @Environment(\.openWindow) private var openWindow
     @State private var token = UUID()
     @State private var closeRequested = false
+    @State private var feedbackDraft: FeedbackDraft?
 
     private var library: Library { Library.shared }
+
+    private var currentCollection: DesignCollection? {
+        collectionID.flatMap { library.collection($0) }
+    }
 
     var body: some View {
         Group {
             if let collectionID, let collection = library.collection(collectionID) {
-                CollectionView(collection: collection)
+                CollectionView(collection: collection, onFeedback: beginFeedback)
                     .onDisappear { library.forget(collectionID) }
             } else {
-                EmptyStateView()
+                EmptyStateView(onFeedback: beginFeedback)
             }
         }
+        .safeAreaInset(edge: .top, spacing: 0) { UpdateBanner() }
+        .sheet(item: $feedbackDraft) { FeedbackSheet(draft: $0) }
+        .focusedSceneValue(\.feedbackAction, FeedbackAction(perform: beginFeedback))
+        .focusedSceneValue(\.activeCollection, currentCollection)
         .onAppear {
             library.openWindow = { openWindow(id: "collection", value: $0) }
 
@@ -90,9 +99,19 @@ struct CollectionWindow: View {
         }
         .onDisappear { library.unregisterEmptyWindow(token: token) }
     }
+
+    /// Captures this window *before* the sheet covers it, then opens the sheet.
+    private func beginFeedback() {
+        guard feedbackDraft == nil else { return }
+        feedbackDraft = FeedbackDraft(
+            screenshot: FeedbackCapture.window(NSApp.keyWindow),
+            context: FeedbackContext.current(collection: currentCollection)
+        )
+    }
 }
 
 private struct EmptyStateView: View {
+    let onFeedback: () -> Void
     @State private var isTargeted = false
 
     var body: some View {
@@ -103,6 +122,8 @@ private struct EmptyStateView: View {
         } actions: {
             Button("Open…") { Library.shared.presentOpenPanel() }
                 .keyboardShortcut("o", modifiers: .command)
+            Button("Send Feedback…") { onFeedback() }
+                .buttonStyle(.link)
         }
         .frame(minWidth: 480, minHeight: 320)
         .background(isTargeted ? Color.accentColor.opacity(0.08) : Color.clear)
@@ -121,17 +142,21 @@ private struct EmptyStateView: View {
 /// the window being redrawn.
 struct CollectionView: View {
     @Bindable var collection: DesignCollection
+    let onFeedback: () -> Void
 
     var body: some View {
         NavigationStack(path: $collection.path) {
-            IndexView(collection: collection)
+            IndexView(collection: collection, onFeedback: onFeedback)
                 .navigationDestination(for: OpenDesign.ID.self) { id in
                     if let openDesign = collection.design(id) {
-                        DetailView(collection: collection, openDesign: openDesign)
+                        DetailView(collection: collection, openDesign: openDesign, onFeedback: onFeedback)
                     } else {
                         ContentUnavailableView("Design Removed", systemImage: "xmark.rectangle")
                     }
                 }
         }
+        // Read here, so this view re-renders — and the View menu relabels — on navigation.
+        .focusedSceneValue(\.visibleViewer, collection.visibleDesign?.model)
+        .background(ZoomAliasShortcut(collection: collection))
     }
 }

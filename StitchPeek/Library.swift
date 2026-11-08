@@ -96,6 +96,23 @@ final class DesignCollection: Identifiable {
     var designs: [OpenDesign] = []
     var failures: [LoadFailure] = []
     var layout: IndexLayout = .grid
+    /// Tile size in the index, changed with ⌘+ / ⌘− the way Finder and Photos do.
+    var tileScale: CGFloat = 1
+
+    static let tileScaleRange: ClosedRange<CGFloat> = 0.6...2.4
+
+    func enlargeTiles() {
+        tileScale = min(tileScale * 1.2, Self.tileScaleRange.upperBound)
+    }
+
+    func shrinkTiles() {
+        tileScale = max(tileScale / 1.2, Self.tileScaleRange.lowerBound)
+    }
+
+    /// The design the window is showing, or nil when it is on the index.
+    var visibleDesign: OpenDesign? {
+        path.last.flatMap { design($0) }
+    }
     /// Navigation: empty shows the index; one id shows that design.
     var path: [OpenDesign.ID] = []
     var isLoading = false
@@ -287,11 +304,7 @@ final class Library {
             let results = await withTaskGroup(of: (Int, Result<Design, any Error>).self) { group in
                 for (index, url) in urls.enumerated() {
                     group.addTask {
-                        // Recent-documents URLs from an earlier launch carry a security scope
-                        // that has to be opened; everything else returns false harmlessly.
-                        let scoped = url.startAccessingSecurityScopedResource()
-                        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-                        return (index, Result { try DSTParser.parse(contentsOf: url) })
+                        (index, Result { try DSTParser.parse(contentsOf: url) })
                     }
                 }
                 var collected: [(Int, Result<Design, any Error>)] = []

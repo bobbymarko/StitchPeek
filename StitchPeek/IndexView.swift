@@ -7,6 +7,7 @@ import UniformTypeIdentifiers
 /// go into the viewer; the navigation back button returns here.
 struct IndexView: View {
     @Bindable var collection: DesignCollection
+    let onFeedback: () -> Void
     @State private var isTargeted = false
 
     var body: some View {
@@ -59,10 +60,11 @@ struct IndexView: View {
     // MARK: Layouts
 
     private var grid: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 224, maximum: 224), spacing: 20, alignment: .top)], alignment: .leading, spacing: 24) {
+        let width = (224 * collection.tileScale).rounded()
+        return LazyVGrid(columns: [GridItem(.adaptive(minimum: width, maximum: width), spacing: 20, alignment: .top)], alignment: .leading, spacing: 24) {
             ForEach(collection.designs) { openDesign in
                 Button { open(openDesign) } label: {
-                    DesignTile(openDesign: openDesign)
+                    DesignTile(openDesign: openDesign, width: width)
                 }
                 .buttonStyle(.plain)
                 .contextMenu { contextMenu(for: openDesign) }
@@ -74,7 +76,7 @@ struct IndexView: View {
         LazyVStack(alignment: .leading, spacing: 0) {
             ForEach(Array(collection.designs.enumerated()), id: \.element.id) { index, openDesign in
                 Button { open(openDesign) } label: {
-                    FilmstripRow(openDesign: openDesign, position: index + 1, count: collection.designs.count)
+                    FilmstripRow(openDesign: openDesign, position: index + 1, count: collection.designs.count, scale: collection.tileScale)
                 }
                 .buttonStyle(.plain)
                 .contextMenu { contextMenu(for: openDesign) }
@@ -137,6 +139,9 @@ struct IndexView: View {
             }
             .help("Export every design here as one sheet (⌘E)")
             .disabled(collection.designs.isEmpty)
+
+            Button("Feedback", systemImage: "text.bubble") { onFeedback() }
+                .help("Send feedback about what's on screen (⇧⌘F)")
         }
     }
 
@@ -176,11 +181,12 @@ struct ThumbnailView: View {
 
 private struct DesignTile: View {
     let openDesign: OpenDesign
+    let width: CGFloat
 
     var body: some View {
         let design = openDesign.design
         VStack(alignment: .leading, spacing: 6) {
-            ThumbnailView(openDesign: openDesign, size: CGSize(width: 224, height: 150))
+            ThumbnailView(openDesign: openDesign, size: CGSize(width: width, height: (width * 150 / 224).rounded()))
             Text(openDesign.displayName)
                 .font(.callout.weight(.medium))
                 .lineLimit(1)
@@ -189,7 +195,7 @@ private struct DesignTile: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
         }
-        .frame(width: 224, alignment: .leading)
+        .frame(width: width, alignment: .leading)
         .contentShape(Rectangle())
     }
 }
@@ -198,11 +204,12 @@ private struct FilmstripRow: View {
     let openDesign: OpenDesign
     let position: Int
     let count: Int
+    let scale: CGFloat
 
     var body: some View {
         let design = openDesign.design
         HStack(alignment: .top, spacing: 18) {
-            ThumbnailView(openDesign: openDesign, size: CGSize(width: 320, height: 200))
+            ThumbnailView(openDesign: openDesign, size: CGSize(width: (320 * scale).rounded(), height: (200 * scale).rounded()))
 
             VStack(alignment: .leading, spacing: 5) {
                 HStack(alignment: .firstTextBaseline) {

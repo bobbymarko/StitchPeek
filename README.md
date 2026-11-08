@@ -8,6 +8,8 @@ embroidery files.
 - **Viewer app** — open a whole batch at once and get a contact sheet or filmstrip of every
   design; click into one for pan/zoom, per-color-block isolation, a stitch scrubber, a stats
   panel and recolorable blocks; export the batch as a printable sheet for bulk orders.
+- **Updates itself** from GitHub Releases, and **Send Feedback** files a comment with an
+  annotated screenshot straight into a queue your coding agents work from.
 
 ![A 220,000-stitch spiral rendered by StitchKit](Design/example-render.png)
 
@@ -289,6 +291,66 @@ one-third-of-top rule, and run time assumes 650 stitches per minute; both are la
 estimates in the report because DST records neither. Checked against another DST tool's
 report for the same file, the stitch count, dimensions, trim count, thread length and bobbin
 figures all agree.
+
+## Zooming
+
+| | Viewer | Index |
+|---|---|---|
+| ⌘+ / ⌘= | zoom in | bigger tiles |
+| ⌘− | zoom out | smaller tiles |
+| ⌘0 | zoom to fit | default tile size |
+| ⌘1 | actual size (1 pt = 0.1 mm) | — |
+| pinch, ⌘-scroll | zoom at the cursor | — |
+
+All of it is in the **View** menu. ⌘= is handled as well as ⌘+, since most people don't
+reach for Shift.
+
+## Updates
+
+Installed copies check GitHub Releases at launch and every six hours, and show a banner
+when there's something newer: **Update and Relaunch** downloads it, verifies it, swaps the
+app in place and reopens. *StitchPeek → Check for Updates…* checks on demand; Settings →
+Updates turns the automatic check off.
+
+Every release is signed with an Ed25519 key that never leaves the release machine; the app
+carries the public half and refuses any download whose signature doesn't verify, whose
+bundle identifier or version is wrong, or whose code signature is broken. That's the check
+standing in for notarization — a compromised GitHub account still can't push an update.
+
+To replace itself the host app can't be sandboxed, so it isn't; the two Quick Look
+extensions, which are what touch files from anywhere, still are.
+
+**The first install on a Mac is by hand** (1.0.0 had no updater): download `StitchPeek.zip`
+from the latest release, unzip into Applications, right-click → Open once to get past
+Gatekeeper. Everything after that arrives through the banner.
+
+## Feedback
+
+*Help → Send Feedback* (⇧⌘F, or the speech-bubble toolbar button) captures the window,
+lets you click on the screenshot to drop numbered markers on what you mean, and files it —
+with the app version, the screen, the design and how it was being viewed, and optionally
+the `.dst` itself — as an issue in the private repo `bobbymarko/StitchPeek-feedback`.
+Private because reports name clients; this repo is public.
+
+Coding agents work that queue: see [CLAUDE.md](CLAUDE.md) and `Scripts/feedback.py`.
+
+**Setup, once per Mac:** create a [fine-grained token](https://github.com/settings/personal-access-tokens/new)
+with access to *only* `StitchPeek-feedback`, and **Issues** and **Contents** set to *Read and
+write*. Paste it into StitchPeek → Settings → Feedback → Save. It goes into that Mac's
+Keychain; nothing secret is compiled into the app. When it expires, sending says so — paste
+a new one.
+
+## Releasing
+
+```bash
+Scripts/release.sh 1.2.0 [notes.md]
+```
+
+Refuses to run on a dirty tree, for a version that isn't newer, or when the signing key
+doesn't match the app's; otherwise bumps `VERSION`, tests, builds clean, signs, tags,
+publishes, and downloads the release back to verify it exactly as the app will. The signing
+key lives at `~/.config/stitchpeek/update-signing-key` — **back it up**; without it no
+installed copy will ever accept another update.
 
 ## Licence
 

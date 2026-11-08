@@ -8,6 +8,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Library.shared.open(urls)
     }
 
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        Updater.shared.start()
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         false
     }

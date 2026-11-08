@@ -21,6 +21,11 @@
 		825CC977C04E99E974791F73 /* ContactSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DF48695CFF7783516A6662 /* ContactSheet.swift */; };
 		13FD663CAC5A4B3D07D7A749 /* ReportText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA27039B0B48652B9DFADA1B /* ReportText.swift */; };
 		71C89A2E9BACE25334DAE2C0 /* RecentDocuments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968DEB54C073234251ABF126 /* RecentDocuments.swift */; };
+		CCAE53ABFE6C47B026EECA63 /* AppCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629C2168E9DE1B5987436449 /* AppCommands.swift */; };
+		6349F3AE79B07E79D5BB8511 /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62190B742EF9E1795F8CCF64 /* Updater.swift */; };
+		079BFCE1209023BE1DC1E560 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7005D8E2B4C0A3874CD1E896 /* Feedback.swift */; };
+		B0AE6A784617299ABE773EED /* FeedbackSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C6CDA7D3233FD20AC0AB43 /* FeedbackSheet.swift */; };
+		133A0FD287ECE89B2DF21934 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6953FB9D50CB17A689E995A /* SettingsView.swift */; };
 		ED7F96CE44EFF1F12943CE5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F819D9E5E248C2BBDD934F4 /* Assets.xcassets */; };
 		BBE3438B4A9110E68EEB2F21 /* StitchKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1F34FF74EDB26BC9CF3CC44D /* StitchKit */; };
 		453F6FDB19321FF8C694C598 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B478A6EA2A0AE72B061CACCB /* PreviewProvider.swift */; };
@@ -78,6 +83,11 @@
 		40DF48695CFF7783516A6662 /* ContactSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSheet.swift; sourceTree = "<group>"; };
 		AA27039B0B48652B9DFADA1B /* ReportText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportText.swift; sourceTree = "<group>"; };
 		968DEB54C073234251ABF126 /* RecentDocuments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentDocuments.swift; sourceTree = "<group>"; };
+		629C2168E9DE1B5987436449 /* AppCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCommands.swift; sourceTree = "<group>"; };
+		62190B742EF9E1795F8CCF64 /* Updater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updater.swift; sourceTree = "<group>"; };
+		7005D8E2B4C0A3874CD1E896 /* Feedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feedback.swift; sourceTree = "<group>"; };
+		30C6CDA7D3233FD20AC0AB43 /* FeedbackSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackSheet.swift; sourceTree = "<group>"; };
+		C6953FB9D50CB17A689E995A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		3F819D9E5E248C2BBDD934F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BC252873D45EC4F07B078E1D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		18230653B922F032E5CCA822 /* StitchPeek.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StitchPeek.entitlements; sourceTree = "<group>"; };
@@ -157,6 +167,11 @@
 				40DF48695CFF7783516A6662 /* ContactSheet.swift */,
 				AA27039B0B48652B9DFADA1B /* ReportText.swift */,
 				968DEB54C073234251ABF126 /* RecentDocuments.swift */,
+				629C2168E9DE1B5987436449 /* AppCommands.swift */,
+				62190B742EF9E1795F8CCF64 /* Updater.swift */,
+				7005D8E2B4C0A3874CD1E896 /* Feedback.swift */,
+				30C6CDA7D3233FD20AC0AB43 /* FeedbackSheet.swift */,
+				C6953FB9D50CB17A689E995A /* SettingsView.swift */,
 				3F819D9E5E248C2BBDD934F4 /* Assets.xcassets */,
 				BC252873D45EC4F07B078E1D /* Info.plist */,
 				18230653B922F032E5CCA822 /* StitchPeek.entitlements */,
@@ -338,6 +353,11 @@
 				825CC977C04E99E974791F73 /* ContactSheet.swift in Sources */,
 				13FD663CAC5A4B3D07D7A749 /* ReportText.swift in Sources */,
 				71C89A2E9BACE25334DAE2C0 /* RecentDocuments.swift in Sources */,
+				CCAE53ABFE6C47B026EECA63 /* AppCommands.swift in Sources */,
+				6349F3AE79B07E79D5BB8511 /* Updater.swift in Sources */,
+				079BFCE1209023BE1DC1E560 /* Feedback.swift in Sources */,
+				B0AE6A784617299ABE773EED /* FeedbackSheet.swift in Sources */,
+				133A0FD287ECE89B2DF21934 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,7 +456,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = StitchPeek/StitchPeek.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10100;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StitchPeek/Info.plist;
@@ -444,7 +464,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -457,7 +477,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = StitchPeek/StitchPeek.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10100;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StitchPeek/Info.plist;
@@ -465,7 +485,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -477,7 +497,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = StitchPeekPreview/StitchPeekPreview.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10100;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StitchPeekPreview/Info.plist;
@@ -486,7 +506,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek.Preview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -499,7 +519,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = StitchPeekPreview/StitchPeekPreview.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10100;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StitchPeekPreview/Info.plist;
@@ -508,7 +528,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek.Preview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -521,7 +541,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = StitchPeekThumbnail/StitchPeekThumbnail.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10100;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StitchPeekThumbnail/Info.plist;
@@ -530,7 +550,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek.Thumbnail;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -543,7 +563,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = StitchPeekThumbnail/StitchPeekThumbnail.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10100;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StitchPeekThumbnail/Info.plist;
@@ -552,7 +572,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bobbymarko.stitchpeek.Thumbnail;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
