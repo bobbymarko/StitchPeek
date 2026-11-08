@@ -38,6 +38,8 @@ def list_feedback(include_closed):
     ))
     if not issues:
         print("No feedback." if include_closed else "No open feedback.")
+        # GitHub's issue list lags issue creation by a few seconds.
+        print("(A report filed in the last few seconds may not be listed yet.)")
         return
     for issue in issues:
         kinds = [label["name"] for label in issue["labels"] if label["name"] != "feedback"]
