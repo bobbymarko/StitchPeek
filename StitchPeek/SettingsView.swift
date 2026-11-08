@@ -7,7 +7,7 @@ struct SettingsView: View {
             UpdatesSettings()
                 .tabItem { Label("Updates", systemImage: "arrow.down.circle") }
             FeedbackSettings()
-                .tabItem { Label("Feedback", systemImage: "text.bubble") }
+                .tabItem { Label("App Feedback", systemImage: "text.bubble") }
         }
         .frame(width: 560)
     }
@@ -49,7 +49,7 @@ private struct FeedbackSettings: View {
                         .foregroundStyle(token.isConfigured ? .primary : .secondary)
                 }
             } footer: {
-                Text("Send Feedback (⇧⌘F, or the speech-bubble button) files an issue there with your comment, a screenshot, and what was on screen. Coding agents work through that queue.")
+                Text("Help → Send App Feedback (⇧⌘F) files a StitchPeek problem there with your comment, a screenshot, and what was on screen, for the coding agents. Design markup for the embroidery agent doesn't use this — it's saved beside the design.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

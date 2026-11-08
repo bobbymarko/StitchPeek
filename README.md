@@ -8,8 +8,10 @@ embroidery files.
 - **Viewer app** — open a whole batch at once and get a contact sheet or filmstrip of every
   design; click into one for pan/zoom, per-color-block isolation, a stitch scrubber, a stats
   panel and recolorable blocks; export the batch as a printable sheet for bulk orders.
-- **Updates itself** from GitHub Releases, and **Send Feedback** files a comment with an
-  annotated screenshot straight into a queue your coding agents work from.
+- **Markup** for the embroidery agent: pin a spot or box an area on the design, note what
+  to fix, and it's saved beside the `.dst` with exact stitch positions and a picture.
+- **Updates itself** from GitHub Releases; **Send App Feedback** reports StitchPeek
+  problems to the coding agents.
 
 ![A 220,000-stitch spiral rendered by StitchKit](Design/example-render.png)
 
@@ -324,15 +326,50 @@ extensions, which are what touch files from anywhere, still are.
 from the latest release, unzip into Applications, right-click → Open once to get past
 Gatekeeper. Everything after that arrives through the banner.
 
-## Feedback
+## Markup
 
-*Help → Send Feedback* (⇧⌘F, or the speech-bubble toolbar button) captures the window,
+For telling the embroidery agent what to fix in a design. In the viewer, turn on **Markup**
+(toolbar, or ⇧⌘M): click the design to pin a spot, drag to box an area, and type a note
+for each mark in the inspector. Scrolling and pinching still pan and zoom. Marks are saved
+automatically beside the design:
+
+| File | What's in it |
+|---|---|
+| `name.markup.png` | The whole design with every mark numbered, then a stitch-level close-up of each with its note. |
+| `name.markup.json` | Each mark's note, author and position, the nearest stitch (pins) or every stitch inside (areas), and the file's SHA-256. |
+
+**Copy for Agent** puts a message on the clipboard with every note and where both files are,
+ready to paste into the agent's chat. Marks reload whenever the design is opened — on
+either Mac, if the folder is shared — and designs with marks show a red pin count in the
+index.
+
+The JSON explains its own conventions in its `about` field, so any agent can read it.
+The essentials:
+
+- **Positions are DST units (0.1 mm), +y down, from the DST's origin — exactly the
+  coordinates `pyembroidery.read_dst()` reports.** Checked on real designs: every stitch
+  position matches verbatim, and the nearest stitch and boxed-stitch counts StitchPeek
+  writes agree with an independent search over pyembroidery's stitch list. Match marks to
+  stitches **by position**.
+- `record` / `byteOffset` locate the raw 3-byte record, but `record` is *not*
+  pyembroidery's stitch-list index — pyembroidery folds runs of jumps into trims, so its
+  list is longer or shorter than the record count (+13 and −9 on two test files).
+- If the `.dst` changes after marking (say the agent re-exports it), its hash no longer
+  matches and StitchPeek flags the marks as possibly out of line until someone confirms
+  them or clears them. Editing a note doesn't clear that flag.
+- Clearing every mark deletes both files; StitchPeek never deletes a same-named file it
+  didn't write.
+
+## App feedback
+
+*Help → Send App Feedback* (⇧⌘F) is for problems with StitchPeek itself. It captures the window,
 lets you click on the screenshot to drop numbered markers on what you mean, and files it —
 with the app version, the screen, the design and how it was being viewed, and optionally
 the `.dst` itself — as an issue in the private repo `bobbymarko/StitchPeek-feedback`.
 Private because reports name clients; this repo is public.
 
 Coding agents work that queue: see [CLAUDE.md](CLAUDE.md) and `Scripts/feedback.py`.
+Design markup doesn't go here — it stays beside the design, for the embroidery agent.
 
 **Setup, once per Mac:** create a [fine-grained token](https://github.com/settings/personal-access-tokens/new)
 with access to *only* `StitchPeek-feedback`, and **Issues** and **Contents** set to *Read and

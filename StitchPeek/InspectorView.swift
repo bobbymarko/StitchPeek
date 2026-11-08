@@ -22,11 +22,17 @@ extension StitchColor {
 /// The stats a person actually wants before hooping something.
 struct InspectorView: View {
     let model: ViewerModel
+    /// The .dst on disk, for Copy for Agent and the save location.
+    var fileURL: URL?
 
     private var design: Design { model.design }
 
     var body: some View {
         Form {
+            if model.isMarkingUp || !model.annotations.isEmpty {
+                MarkupSection(model: model, fileURL: fileURL)
+            }
+
             Section("Design") {
                 if let name = design.name {
                     LabeledContent("Name", value: name)
@@ -153,5 +159,148 @@ private struct BlockRow: View {
                 model.toggleIsolation(of: index)
             }
         }
+    }
+}
+
+
+// MARK: - Markup
+
+private struct MarkupSection: View {
+    let model: ViewerModel
+    let fileURL: URL?
+
+    @FocusState private var focusedNote: UUID?
+    @State private var copied = false
+
+    var body: some View {
+        Section {
+            if model.markupIsStale {
+                VStack(alignment: .leading, spacing: 6) {
+                    Label("This design has changed since these marks were made, so they may not line up.",
+                          systemImage: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                        .font(.callout)
+                    HStack {
+                        Button("They Still Line Up") { model.confirmMarkupStillLinesUp() }
+                        Button("Clear All", role: .destructive) { model.removeAllAnnotations() }
+                    }
+                    .controlSize(.small)
+                }
+            }
+
+            if model.annotations.isEmpty {
+                Text("Click the design to pin a spot, or drag to box an area. Each mark gets its own note.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+
+            ForEach(Array(model.annotations.enumerated()), id: \.element.id) { index, annotation in
+                AnnotationRow(
+                    number: index + 1,
+                    annotation: annotation,
+                    isSelected: model.selectedAnnotationID == annotation.id,
+                    note: Binding(
+                        get: { annotation.note },
+                        set: { model.updateNote(annotation.id, to: $0) }
+                    ),
+                    focusedNote: $focusedNote,
+                    onSelect: { model.selectedAnnotationID = annotation.id },
+                    onDelete: { model.removeAnnotation(annotation.id) }
+                )
+            }
+
+            if let error = model.markupSaveError {
+                Label(error, systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.red)
+                    .font(.caption)
+            }
+        } header: {
+            HStack {
+                Text("Markup")
+                Spacer()
+                if !model.annotations.isEmpty {
+                    if let fileURL {
+                        Button(copied ? "Copied" : "Copy for Agent") {
+                            NSPasteboard.general.clearContents()
+                            NSPasteboard.general.setString(
+                                MarkupStore.agentPrompt(dst: fileURL, annotations: model.annotations),
+                                forType: .string
+                            )
+                            copied = true
+                            Task { try? await Task.sleep(for: .seconds(2)); copied = false }
+                        }
+                        .buttonStyle(.link)
+                        .font(.caption)
+                        .help("Copy a message for the embroidery agent, with every note and where the files are")
+                    }
+                    Button("Clear All") { model.removeAllAnnotations() }
+                        .buttonStyle(.link)
+                        .font(.caption)
+                }
+            }
+        } footer: {
+            if let fileURL, !model.annotations.isEmpty {
+                Text("Saved beside the design as \(MarkupStore.jsonURL(for: fileURL).lastPathComponent) and \(MarkupStore.pictureURL(for: fileURL).lastPathComponent). Point the embroidery agent at those, or use Copy for Agent.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        // A freshly dropped mark goes straight to its note.
+        .onChange(of: model.selectedAnnotationID) { _, id in
+            if let id, model.annotations.last?.id == id, model.annotations.last?.note.isEmpty == true {
+                focusedNote = id
+            }
+        }
+    }
+}
+
+private struct AnnotationRow: View {
+    let number: Int
+    let annotation: Annotation
+    let isSelected: Bool
+    @Binding var note: String
+    var focusedNote: FocusState<UUID?>.Binding
+    let onSelect: () -> Void
+    let onDelete: () -> Void
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Text("\(number)")
+                .font(.system(size: 10, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 18, height: 18)
+                .background(Circle().fill(Color(cgColor: MarkupDrawing.red)))
+                .padding(.top, 2)
+
+            VStack(alignment: .leading, spacing: 3) {
+                // An empty title plus a prompt: in a grouped Form a titled TextField becomes a
+                // labelled row, pushing the note to the trailing edge.
+                TextField("", text: $note,
+                          prompt: Text(annotation.kind == .pin ? "What needs fixing here?" : "What needs fixing in this area?"),
+                          axis: .vertical)
+                    .labelsHidden()
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(1...6)
+                    .textFieldStyle(.plain)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .focused(focusedNote, equals: annotation.id)
+                Text("\(annotation.kind == .pin ? "Pin" : "Area") · \(annotation.author) · \(annotation.created.formatted(.relative(presentation: .named)))")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer(minLength: 0)
+
+            Button(action: onDelete) {
+                Image(systemName: "trash")
+            }
+            .buttonStyle(.borderless)
+            .help("Delete mark \(number)")
+        }
+        .padding(.vertical, 2)
+        .padding(.horizontal, 4)
+        .background(isSelected ? Color.accentColor.opacity(0.12) : .clear, in: RoundedRectangle(cornerRadius: 6))
+        .contentShape(Rectangle())
+        .onTapGesture(perform: onSelect)
     }
 }

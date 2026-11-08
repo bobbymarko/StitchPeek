@@ -6,7 +6,6 @@ import SwiftUI
 struct DetailView: View {
     let collection: DesignCollection
     let openDesign: OpenDesign
-    let onFeedback: () -> Void
     @State private var showsInspector = true
 
     /// 60 Hz drive for the stitch scrubber's playback.
@@ -23,7 +22,7 @@ struct DetailView: View {
             .safeAreaInset(edge: .bottom, spacing: 0) { scrubber }
             .toolbar { toolbarContent }
             .inspector(isPresented: $showsInspector) {
-                InspectorView(model: model)
+                InspectorView(model: model, fileURL: openDesign.url)
                     .inspectorColumnWidth(min: 240, ideal: 280, max: 380)
             }
             .navigationTitle(openDesign.displayName)
@@ -31,6 +30,7 @@ struct DetailView: View {
                                 ? "\(position) of \(collection.designs.count)  ·  \(model.design.stitchCount.formatted()) stitches"
                                 : "\(model.design.stitchCount.formatted()) stitches")
             .onReceive(tick) { _ in model.advancePlayback() }
+            .onChange(of: model.isMarkingUp) { _, on in if on { showsInspector = true } }
             .background(hiddenShortcuts)
             .id(openDesign.id)      // fresh canvas state when stepping to a neighbour
     }
@@ -111,8 +111,13 @@ struct DetailView: View {
             }
             .help("Export this design (⌘E)")
 
-            Button("Feedback", systemImage: "text.bubble") { onFeedback() }
-                .help("Send feedback about what's on screen (⇧⌘F)")
+            Toggle(isOn: Binding(
+                get: { model.isMarkingUp },
+                set: { model.isMarkingUp = $0; if $0 { showsInspector = true } }
+            )) {
+                Label("Markup", systemImage: "mappin.and.ellipse")
+            }
+            .help("Mark up the design for the embroidery agent: click to pin a spot, drag to box an area (⇧⌘M)")
         }
     }
 

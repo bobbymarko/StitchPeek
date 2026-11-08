@@ -144,6 +144,74 @@ final class ViewerModel {
         isolatedBlockIndex = (isolatedBlockIndex == index) ? nil : index
     }
 
+    // MARK: - Markup
+
+    /// Marks for the embroidery agent, in design units. Saved beside the .dst by `OpenDesign`.
+    private(set) var annotations: [Annotation] = []
+    /// While on, clicking the canvas drops a pin and dragging boxes an area, instead of panning.
+    var isMarkingUp = false
+    var selectedAnnotationID: UUID?
+    /// The .dst changed after these marks were made, so they may not line up.
+    var markupIsStale = false
+    var markupSaveError: String?
+
+    /// Set by the owner so edits get saved.
+    @ObservationIgnored var onMarkupChange: (() -> Void)?
+
+    func loadAnnotations(_ loaded: [Annotation], stale: Bool) {
+        annotations = loaded
+        markupIsStale = stale
+    }
+
+    @discardableResult
+    func addAnnotation(_ annotation: Annotation) -> Annotation {
+        annotations.append(annotation)
+        selectedAnnotationID = annotation.id
+        onMarkupChange?()
+        return annotation
+    }
+
+    func updateNote(_ id: UUID, to note: String) {
+        guard let index = annotations.firstIndex(where: { $0.id == id }), annotations[index].note != note else { return }
+        annotations[index].note = note
+        onMarkupChange?()
+    }
+
+    func removeAnnotation(_ id: UUID) {
+        annotations.removeAll { $0.id == id }
+        if selectedAnnotationID == id { selectedAnnotationID = nil }
+        onMarkupChange?()
+    }
+
+    /// The person checked the marks against the changed file and they still line up.
+    func confirmMarkupStillLinesUp() {
+        markupIsStale = false
+        onMarkupChange?()
+    }
+
+    func removeAllAnnotations() {
+        annotations.removeAll()
+        selectedAnnotationID = nil
+        markupIsStale = false
+        onMarkupChange?()
+    }
+
+    /// The mark under a point in view coordinates: the nearest pin within reach, else the
+    /// smallest box containing the point.
+    func annotation(atView point: CGPoint, tolerance: CGFloat = 12) -> Annotation? {
+        let t = transform
+        var best: (Annotation, CGFloat)?
+        for annotation in annotations where annotation.kind == .pin {
+            let p = annotation.point.applying(t)
+            let distance = hypot(p.x - point.x, p.y - point.y)
+            if distance <= tolerance, distance < (best?.1 ?? .infinity) { best = (annotation, distance) }
+        }
+        if let best { return best.0 }
+        return annotations
+            .filter { $0.kind == .region && $0.rect.applying(t).standardized.insetBy(dx: -4, dy: -4).contains(point) }
+            .min { $0.rect.width * $0.rect.height < $1.rect.width * $1.rect.height }
+    }
+
     // MARK: - Recoloring
 
     /// Blocks the user has re-colored, so the reset affordance can be offered.

@@ -6,8 +6,7 @@ architecture and for the platform gotchas that already cost time — don't redis
 
 ## Feedback queue
 
-People file feedback from inside the app (Help → Send Feedback, ⇧⌘F, or the speech-bubble
-toolbar button). Each report becomes an issue in the **private** repo
+People report StitchPeek problems from inside the app (Help → Send App Feedback, ⇧⌘F). Each report becomes an issue in the **private** repo
 `bobbymarko/StitchPeek-feedback` (that repo holds nothing else), labelled `bug` or `enhancement`, with:
 
 - their comment (first line is the title);
@@ -31,6 +30,14 @@ StitchKit, release (below), then comment on the issue "Fixed in X.Y.Z — <one l
 **Privacy:** feedback names clients and kids, and screenshots show their designs. This repo
 is public. Never copy client names, design files, or screenshots from feedback into commits,
 fixtures, the README, or release notes — describe the bug generically.
+
+## Design markup is a contract with another agent
+
+The viewer's **Markup** mode writes `name.markup.json` + `name.markup.png` beside a `.dst`
+for the *embroidery* agent (a different agent, outside this repo) — not feedback for you.
+The JSON format (`StitchPeek/Markup.swift`, `MarkupFile`) is read by that agent: positions
+are DST units, +y down, identical to pyembroidery's coordinates. Don't change field names or
+meanings silently; add fields, or bump `version` and say so in the release notes.
 
 ## Build and test
 

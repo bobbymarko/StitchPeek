@@ -12,6 +12,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Updater.shared.start()
     }
 
+    func applicationWillTerminate(_ notification: Notification) {
+        Library.shared.flushAllMarkup()
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         false
     }

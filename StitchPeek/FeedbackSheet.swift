@@ -39,8 +39,8 @@ struct FeedbackSheet: View {
     private var composeView: some View {
         VStack(alignment: .leading, spacing: 14) {
             VStack(alignment: .leading, spacing: 3) {
-                Text("Send Feedback").font(.title2.weight(.semibold))
-                Text("Goes to the private StitchPeek feedback queue, where your agents pick it up.")
+                Text("Send App Feedback").font(.title2.weight(.semibold))
+                Text("For problems with StitchPeek itself. To mark up a design for the embroidery agent, use Markup in the viewer.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }

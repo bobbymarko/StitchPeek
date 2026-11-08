@@ -52,6 +52,49 @@ final class OpenDesign: Identifiable {
     init(url: URL, design: Design) {
         self.url = url
         self.model = ViewerModel(design: design)
+        // Markup saved earlier — on this Mac or, through a shared folder, the other one.
+        if let loaded = MarkupStore.load(for: url) {
+            model.loadAnnotations(loaded.annotations, stale: loaded.isStale)
+            if loaded.isStale { staleSHA256 = loaded.annotatedSHA256 }
+        }
+        model.onMarkupChange = { [weak self] in self?.scheduleMarkupSave() }
+    }
+
+    // MARK: Markup persistence
+
+    @ObservationIgnored private var markupSaveTask: Task<Void, Never>?
+    /// While the marks are stale, the hash of the file they were made on.
+    @ObservationIgnored private var staleSHA256: String?
+
+    /// Debounced, so typing a note doesn't rewrite the files on every keystroke — which
+    /// matters when the folder is synced.
+    private func scheduleMarkupSave() {
+        markupSaveTask?.cancel()
+        markupSaveTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(800))
+            guard !Task.isCancelled else { return }
+            self?.saveMarkupNow()
+        }
+    }
+
+    /// Writes immediately if a save is pending. Called on window close and at quit.
+    func flushMarkup() {
+        guard let task = markupSaveTask else { return }
+        task.cancel()
+        markupSaveTask = nil
+        saveMarkupNow()
+    }
+
+    private func saveMarkupNow() {
+        markupSaveTask = nil
+        // Someone confirmed the marks still line up (or cleared them): vouch for this file.
+        if !model.markupIsStale { staleSHA256 = nil }
+        do {
+            try MarkupStore.save(model.annotations, design: model.design, dst: url, annotatedSHA256: staleSHA256)
+            model.markupSaveError = nil
+        } catch {
+            model.markupSaveError = error.localizedDescription
+        }
     }
 
     private struct ThumbnailKey: Equatable {
@@ -197,7 +240,15 @@ final class Library {
     /// True while any window is showing a batch.
     var hasOpenCollections: Bool { !collections.isEmpty }
 
-    func forget(_ id: UUID) { collections[id] = nil }
+    func forget(_ id: UUID) {
+        collections[id]?.designs.forEach { $0.flushMarkup() }
+        collections[id] = nil
+    }
+
+    /// Saves any markup still waiting on its debounce. Called at quit.
+    func flushAllMarkup() {
+        collections.values.forEach { $0.designs.forEach { $0.flushMarkup() } }
+    }
 
     // MARK: Opening
 

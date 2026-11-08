@@ -50,7 +50,7 @@ struct CollectionWindow: View {
     var body: some View {
         Group {
             if let collectionID, let collection = library.collection(collectionID) {
-                CollectionView(collection: collection, onFeedback: beginFeedback)
+                CollectionView(collection: collection)
                     .onDisappear { library.forget(collectionID) }
             } else {
                 EmptyStateView(onFeedback: beginFeedback)
@@ -126,7 +126,7 @@ private struct EmptyStateView: View {
         } actions: {
             Button("Open…") { Library.shared.presentOpenPanel() }
                 .keyboardShortcut("o", modifiers: .command)
-            Button("Send Feedback…") { onFeedback() }
+            Button("Send App Feedback…") { onFeedback() }
                 .buttonStyle(.link)
         }
         .frame(minWidth: 480, minHeight: 320)
@@ -146,14 +146,13 @@ private struct EmptyStateView: View {
 /// the window being redrawn.
 struct CollectionView: View {
     @Bindable var collection: DesignCollection
-    let onFeedback: () -> Void
 
     var body: some View {
         NavigationStack(path: $collection.path) {
-            IndexView(collection: collection, onFeedback: onFeedback)
+            IndexView(collection: collection)
                 .navigationDestination(for: OpenDesign.ID.self) { id in
                     if let openDesign = collection.design(id) {
-                        DetailView(collection: collection, openDesign: openDesign, onFeedback: onFeedback)
+                        DetailView(collection: collection, openDesign: openDesign)
                     } else {
                         ContentUnavailableView("Design Removed", systemImage: "xmark.rectangle")
                     }

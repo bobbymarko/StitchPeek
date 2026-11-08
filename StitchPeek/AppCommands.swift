@@ -73,6 +73,13 @@ struct ViewCommands: Commands {
 
             Divider()
 
+            Toggle("Markup", isOn: Binding(
+                get: { viewer?.isMarkingUp ?? false },
+                set: { viewer?.isMarkingUp = $0 }
+            ))
+            .keyboardShortcut("m", modifiers: [.command, .shift])
+            .disabled(viewer == nil)
+
             // No key equivalent here on purpose: an app-wide plain "J" would fire while
             // typing into the feedback sheet. The viewer handles J itself.
             Toggle("Show Jump Stitches", isOn: Binding(
@@ -124,7 +131,7 @@ struct AppMenuCommands: Commands {
         }
 
         CommandGroup(replacing: .help) {
-            Button("Send Feedback…") { feedbackAction?.perform() }
+            Button("Send App Feedback…") { feedbackAction?.perform() }
                 .keyboardShortcut("f", modifiers: [.command, .shift])
                 .disabled(feedbackAction == nil)
             Divider()

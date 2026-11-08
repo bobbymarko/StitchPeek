@@ -7,7 +7,6 @@ import UniformTypeIdentifiers
 /// go into the viewer; the navigation back button returns here.
 struct IndexView: View {
     @Bindable var collection: DesignCollection
-    let onFeedback: () -> Void
     @State private var isTargeted = false
 
     var body: some View {
@@ -140,8 +139,6 @@ struct IndexView: View {
             .help("Export every design here as one sheet (⌘E)")
             .disabled(collection.designs.isEmpty)
 
-            Button("Feedback", systemImage: "text.bubble") { onFeedback() }
-                .help("Send feedback about what's on screen (⇧⌘F)")
         }
     }
 
@@ -176,6 +173,19 @@ struct ThumbnailView: View {
         .frame(width: size.width, height: size.height)
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(.separator))
+        .overlay(alignment: .topTrailing) {
+            let count = openDesign.model.annotations.count
+            if count > 0 {
+                Label("\(count)", systemImage: "mappin")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Capsule().fill(Color(cgColor: MarkupDrawing.red)))
+                    .padding(6)
+                    .help("\(count) mark\(count == 1 ? "" : "s") for the embroidery agent")
+            }
+        }
     }
 }
 
