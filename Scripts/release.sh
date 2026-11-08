@@ -22,6 +22,13 @@ die() { echo "release: $*" >&2; exit 1; }
 step() { echo; echo "== $* =="; }
 
 [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "usage: release.sh X.Y.Z [notes.md]"
+# Snapshot the notes now: the clean build below deletes build/, where notes often live.
+if [ -n "$NOTES_FILE" ]; then
+  [ -f "$NOTES_FILE" ] || die "no notes file at $NOTES_FILE"
+  SNAPSHOT=$(mktemp)
+  cp "$NOTES_FILE" "$SNAPSHOT"
+  NOTES_FILE="$SNAPSHOT"
+fi
 cd "$ROOT"
 
 step "Preflight"
