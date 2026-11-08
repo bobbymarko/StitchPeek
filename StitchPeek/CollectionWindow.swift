@@ -56,6 +56,10 @@ struct CollectionWindow: View {
                 EmptyStateView(onFeedback: beginFeedback)
             }
         }
+        // Fill the window before pinning the banner to the top. WindowGroup centres a root
+        // view that is shorter than the window, and the empty state is only as tall as its
+        // contents — so without this the banner floated a third of the way down.
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .safeAreaInset(edge: .top, spacing: 0) { UpdateBanner() }
         .sheet(item: $feedbackDraft) { FeedbackSheet(draft: $0) }
         .focusedSceneValue(\.feedbackAction, FeedbackAction(perform: beginFeedback))
