@@ -32,8 +32,10 @@ def gh(*args, binary=False):
 
 def list_feedback(include_closed):
     state = "all" if include_closed else "open"
+    # No label filter: the repo holds nothing but feedback, and a report whose labels were
+    # dropped (a token without label rights, say) must still reach the queue.
     issues = json.loads(gh(
-        "issue", "list", "-R", REPO, "--label", "feedback", "--state", state,
+        "issue", "list", "-R", REPO, "--state", state,
         "--limit", "200", "--json", "number,title,labels,createdAt,state",
     ))
     if not issues:

@@ -8,7 +8,7 @@ architecture and for the platform gotchas that already cost time — don't redis
 
 People file feedback from inside the app (Help → Send Feedback, ⇧⌘F, or the speech-bubble
 toolbar button). Each report becomes an issue in the **private** repo
-`bobbymarko/StitchPeek-feedback`, labelled `feedback` plus `bug` or `enhancement`, with:
+`bobbymarko/StitchPeek-feedback` (that repo holds nothing else), labelled `bug` or `enhancement`, with:
 
 - their comment (first line is the title);
 - a screenshot of the window, often with **numbered red markers** on the spots they mean;
