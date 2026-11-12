@@ -10,6 +10,8 @@ extension UTType {
     /// where Embrilliance is installed this is the type a .dst actually resolves to.
     static let embrillianceDST = UTType(importedAs: "com.britonleap.dst")
     static var dstTypes: [UTType] { [.tajimaDST, .embrillianceDST] }
+    /// Wilcom EmbroideryStudio / Hatch design, declared in Info.plist. Opens in its own window.
+    static let wilcomEMB = UTType(exportedAs: "com.bobbymarko.stitchpeek.wilcom-emb")
 }
 
 enum IndexLayout: String, CaseIterable, Identifiable {
@@ -224,6 +226,10 @@ final class Library {
     /// Set by the first window to appear; `WindowGroup` only hands this action to views.
     @ObservationIgnored var openWindow: (@MainActor (UUID) -> Void)?
 
+    /// Same, for `.emb` files, which open one window per file (see `EMBWindow`).
+    @ObservationIgnored var openEMBWindow: (@MainActor (URL) -> Void)?
+    @ObservationIgnored private var pendingEMB: [URL] = []
+
     /// Collections that arrived before any window could take them (launch by double-click).
     @ObservationIgnored private var pending: [DesignCollection] = []
     /// Empty windows waiting for content, keyed by a per-window token.
@@ -254,6 +260,7 @@ final class Library {
 
     /// The single entry point for every way files arrive. One window per call.
     func open(_ urls: [URL]) {
+        openEMB(urls.filter { $0.pathExtension.lowercased() == "emb" })
         let accepted = urls.filter { $0.pathExtension.lowercased() == "dst" }
         guard !accepted.isEmpty else { return }
         let collection = DesignCollection()
@@ -268,9 +275,22 @@ final class Library {
         load(accepted, into: collection)
     }
 
+    /// Wilcom files have no stitches to browse, so each opens in a window of its own.
+    private func openEMB(_ urls: [URL]) {
+        for url in urls {
+            RecentDocuments.shared.note(url)
+            if let openEMBWindow {
+                openEMBWindow(url)
+            } else {
+                pendingEMB.append(url)
+            }
+        }
+    }
+
     func presentOpenPanel(addingTo collection: DesignCollection? = nil) {
         let panel = NSOpenPanel()
-        panel.allowedContentTypes = UTType.dstTypes
+        // Adding to an existing window is DST only: an EMB would open a window of its own.
+        panel.allowedContentTypes = collection == nil ? UTType.dstTypes + [.wilcomEMB] : UTType.dstTypes
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
         panel.message = collection == nil ? "Choose one or more DST designs." : "Choose designs to add to this window."
@@ -318,6 +338,11 @@ final class Library {
 
     /// Called once `openWindow` is available: show every batch that arrived before it was.
     func flushPending() {
+        if let openEMBWindow, !pendingEMB.isEmpty {
+            let waiting = pendingEMB
+            pendingEMB.removeAll()
+            for url in waiting { openEMBWindow(url) }
+        }
         guard openWindow != nil, !pending.isEmpty else { return }
         let waiting = pending
         pending.removeAll()

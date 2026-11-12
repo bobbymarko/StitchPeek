@@ -10,6 +10,8 @@ embroidery files.
   panel and recolorable blocks; export the batch as a printable sheet for bulk orders.
 - **Markup** for the embroidery agent: pin a spot or box an area on the design, note what
   to fix, and it's saved beside the `.dst` with exact stitch positions and a picture.
+- **Wilcom EMB** (`.emb`): Quick Look, Finder thumbnails and a viewer window showing the
+  picture saved in the file and its facts (see below).
 - **Updates itself** from GitHub Releases; **Send App Feedback** reports StitchPeek
   problems to the coding agents.
 
@@ -229,6 +231,39 @@ lsregister -f /Applications/StitchPeek.app
 
 If a rebuild's behavior doesn't change, `killall quicklookd` — it holds onto a loaded copy
 of the extension.
+
+---
+
+## Wilcom EMB
+
+An EMB is an OLE2 compound file. StitchKit reads it with a small pure-Swift reader
+(`CFBReader.swift`, `EMBReader.swift`; no dependency, zlib through Apple's Compression
+framework) and shows what the file stores in the clear:
+
+- the **preview picture** (a 256 px JPEG, else a 100 px BMP), trimmed of the grey padding Wilcom
+  adds around a wide design;
+- the **design information**: size (the file's unit is 1/180 mm), stitches, trims, colors,
+  color changes, object count, machine format, and the thread list with names and RGB.
+
+The stitches and objects are in a separate stream that is encrypted. StitchPeek does not read it,
+so an EMB has **no stitch canvas, scrubber or recoloring**: its viewer window, preview and
+thumbnail show the stored picture and the facts only. The Quick Look preview adds an info panel
+with a swatch per thread.
+
+The `.emb` type is declared like `.dst` (`com.bobbymarko.stitchpeek.wilcom-emb`), at *Alternate*
+handler rank. Another app that exports its own `.emb` type may win the resolution; if previews
+don't appear, check `mdls -name kMDItemContentType some.emb`, then add that identifier to the two
+extensions' `QLSupportedContentTypes`, as was done for Embrilliance's `.dst`.
+
+Tests: `swift test` builds synthetic compound files, so no sample is committed. For real files
+(never commit them), the Python mirror and the Swift reader can be diffed:
+
+```bash
+python3 Scripts/test_emb_reference.py        # reference vs an independent reader, over EMB_SAMPLES
+STITCHPEEK_EMB_SAMPLES=~/some/folder swift test --package-path Packages/StitchKit
+Scripts/emb_reference.py dump a.emb | diff - <(Packages/StitchKit/.build/release/stitchdump emb a.emb)
+Packages/StitchKit/.build/release/stitchdump embpng a.emb out.png     # the Quick Look layout
+```
 
 ---
 

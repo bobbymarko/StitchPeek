@@ -1,4 +1,5 @@
 import CoreGraphics
+import CryptoKit
 import Foundation
 import ImageIO
 import StitchKit
@@ -10,6 +11,9 @@ import UniformTypeIdentifiers
 ///                                     Scripts/reference_decoder.py over any corpus
 ///     stitchdump stats   <file.dst>   parsed summary
 ///     stitchdump png     <file.dst> <out.png> [size]   render through DesignRenderer
+///     stitchdump emb     <file.emb>   canonical text dump of a Wilcom EMB's readable data —
+///                                     diff against Scripts/emb_reference.py dump
+///     stitchdump embpng  <file.emb> <out.png>   the Quick Look preview, rendered to a PNG
 ///
 /// Exists so the parser can be checked against the Python reference on real files that are
 /// too private, or too large, to commit as fixtures.
@@ -21,7 +25,7 @@ func fail(_ message: String) -> Never {
 
 let arguments = Array(CommandLine.arguments.dropFirst())
 guard arguments.count >= 2 else {
-    fail("usage: stitchdump <records|stats> <file.dst>")
+    fail("usage: stitchdump <records|stats|png|emb|embpng> <file>")
 }
 
 let mode = arguments[0]
@@ -88,6 +92,63 @@ case "png":
         CGImageDestinationAddImage(destination, image, nil)
         guard CGImageDestinationFinalize(destination) else { fail("cannot finalize \(out.path)") }
         print("wrote \(out.path)  \(Int(size.width))x\(Int(size.height)) @2x")
+    } catch {
+        fail("parse failed: \(error.localizedDescription)")
+    }
+
+case "emb":
+    do {
+        let d = try EMBReader.parse(contentsOf: url)
+        func sha(_ data: Data?) -> String {
+            guard let data else { return "-" }
+            return "\(data.count) " + SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        }
+        func mm(_ v: Double?) -> String { v.map { String(format: "%.1f", $0) } ?? "-" }
+        var out = ""
+        out += "stitches \(d.stitchCount)\n"
+        out += "trims \(d.trimCount)\n"
+        out += "colors \(d.colorCount)\n"
+        out += "stops \(d.stopCount)\n"
+        out += "colorchanges \(d.colorChangeCount)\n"
+        out += "objects \(d.objectCount)\n"
+        out += String(format: "width_mm %.3f\n", d.widthMM)
+        out += String(format: "height_mm %.3f\n", d.heightMM)
+        out += "thread_mm \(mm(d.threadLengthMM))\n"
+        out += "bobbin_mm \(mm(d.bobbinLengthMM))\n"
+        out += "machine \(d.machineFormat ?? "-")\n"
+        out += "source \(d.source ?? "-")\n"
+        out += "colorway \(d.colorway ?? "-")\n"
+        out += "bmp \(sha(d.designIconBMP))\n"
+        out += "jpeg \(sha(d.trueViewJPEG))\n"
+        for t in d.threads {
+            out += "thread \(t.stop) \(t.paletteSlot) \(t.code) \(t.hexString.lowercased()) \(t.name)|\(t.chart)\n"
+        }
+        FileHandle.standardOutput.write(Data(out.utf8))
+    } catch {
+        fail("parse failed: \(error.localizedDescription)")
+    }
+
+case "embpng":
+    guard arguments.count >= 3 else { fail("usage: stitchdump embpng <file.emb> <out.png>") }
+    do {
+        let design = try EMBReader.parse(contentsOf: url)
+        let size = EMBRenderer.previewSize
+        guard let context = CGContext(
+            data: nil, width: Int(size.width), height: Int(size.height), bitsPerComponent: 8, bytesPerRow: 0,
+            space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else { fail("no bitmap context") }
+        EMBRenderer.renderPreview(
+            design, image: EMBRenderer.previewImage(for: design),
+            title: url.deletingPathExtension().lastPathComponent, into: context, size: size
+        )
+        guard let image = context.makeImage() else { fail("render failed") }
+        let out = URL(fileURLWithPath: arguments[2])
+        guard let destination = CGImageDestinationCreateWithURL(out as CFURL, UTType.png.identifier as CFString, 1, nil) else {
+            fail("cannot write \(out.path)")
+        }
+        CGImageDestinationAddImage(destination, image, nil)
+        guard CGImageDestinationFinalize(destination) else { fail("cannot finalize \(out.path)") }
+        print("wrote \(out.path)  \(Int(size.width))x\(Int(size.height))")
     } catch {
         fail("parse failed: \(error.localizedDescription)")
     }

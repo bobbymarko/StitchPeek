@@ -34,6 +34,28 @@
 	     another app, this ranking is the first thing to look at. -->
 	<key>UTExportedTypeDeclarations</key>
 	<array>
+		<!-- Wilcom EmbroideryStudio / Hatch design. Like .dst, no system type exists. The file is
+		     an OLE2 compound file, but it conforms to public.data only: claiming a more specific
+		     parent would not help LaunchServices and could pull in other handlers. The design
+		     stream inside is encrypted; StitchPeek shows the preview images and design facts
+		     stored beside it, never the stitches. -->
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.bobbymarko.stitchpeek.wilcom-emb</string>
+			<key>UTTypeDescription</key>
+			<string>Wilcom Embroidery Design</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>emb</string>
+				</array>
+			</dict>
+		</dict>
 		<dict>
 			<key>UTTypeIdentifier</key>
 			<string>com.bobbymarko.stitchpeek.tajima-dst</string>
@@ -81,6 +103,20 @@
 
 	<key>CFBundleDocumentTypes</key>
 	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Wilcom Embroidery Design</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<!-- Alternate: Wilcom's own software is the editor for .emb, and StitchPeek only
+			     reads the preview inside. Set to Owner, or use Get Info, to make it the default. -->
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.bobbymarko.stitchpeek.wilcom-emb</string>
+			</array>
+		</dict>
 		<dict>
 			<key>CFBundleTypeName</key>
 			<string>Tajima Embroidery Design</string>
