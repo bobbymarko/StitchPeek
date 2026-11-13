@@ -21,6 +21,10 @@ final class PreviewProvider: QLPreviewProvider, QLPreviewingController {
     private static let log = Logger(subsystem: "com.bobbymarko.stitchpeek", category: "preview")
 
     func providePreview(for request: QLFilePreviewRequest) async throws -> QLPreviewReply {
+        if request.fileURL.pathExtension.lowercased() == "emb" {
+            return try embPreview(for: request)
+        }
+
         let design: Design
         do {
             design = try DSTParser.parse(contentsOf: request.fileURL)
@@ -46,6 +50,31 @@ final class PreviewProvider: QLPreviewProvider, QLPreviewingController {
                     into: context,
                     size: contextSize,
                     background: DesignRenderer.fabricColor
+                )
+            }
+        )
+    }
+
+    /// Wilcom EMB: the picture stored in the file, with an info panel. There are no stitches to
+    /// draw — the design stream is encrypted and is never read.
+    private func embPreview(for request: QLFilePreviewRequest) throws -> QLPreviewReply {
+        let design: EMBDesign
+        do {
+            design = try EMBReader.parse(contentsOf: request.fileURL)
+        } catch {
+            Self.log.error("could not parse \(request.fileURL.lastPathComponent, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            throw error
+        }
+        let title = request.fileURL.deletingPathExtension().lastPathComponent
+        let size = EMBRenderer.previewSize
+        // The image is decoded inside the draw block: `EMBDesign` is Sendable, `CGImage` is
+        // not guaranteed to be, and decoding a 256 px JPEG is cheap.
+        return QLPreviewReply(
+            contextSize: size,
+            isBitmap: false,
+            drawUsing: { context, _ in
+                EMBRenderer.renderPreview(
+                    design, image: EMBRenderer.previewImage(for: design), title: title, into: context, size: size
                 )
             }
         )

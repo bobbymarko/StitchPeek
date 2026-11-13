@@ -10,6 +10,8 @@ embroidery files.
   panel and recolorable blocks; export the batch as a printable sheet for bulk orders.
 - **Markup** for the embroidery agent: pin a spot or box an area on the design, note what
   to fix, and it's saved beside the `.dst` with exact stitch positions and a picture.
+- **Wilcom EMB** (`.emb`): Quick Look, Finder thumbnails and a viewer window showing the
+  picture saved in the file and its facts (see below).
 - **Updates itself** from GitHub Releases; **Send App Feedback** reports StitchPeek
   problems to the coding agents.
 
@@ -229,6 +231,48 @@ lsregister -f /Applications/StitchPeek.app
 
 If a rebuild's behavior doesn't change, `killall quicklookd` — it holds onto a loaded copy
 of the extension.
+
+---
+
+## Wilcom EMB
+
+An EMB is an OLE2 compound file. StitchKit reads it with a small pure-Swift reader
+(`CFBReader.swift`, `EMBReader.swift`; no dependency, zlib through Apple's Compression
+framework) and shows what the file stores in the clear:
+
+- the **preview picture** (a 256 px JPEG, else a 100 px BMP), trimmed of the grey padding Wilcom
+  adds around a wide design;
+- the **design information**: size (the file's unit is 1/180 mm), stitches, trims, colors,
+  color changes, object count, machine format, and the thread list with names and RGB.
+
+The stitches and objects are in a separate stream that is encrypted. StitchPeek does not read it,
+so an EMB has **no stitch canvas, scrubber or recoloring**: its viewer window, preview and
+thumbnail show the stored picture and the facts only. The Quick Look preview adds an info panel
+with a swatch per thread.
+
+Each `.emb` opens as its own **tab** (there's no batch index for EMB, since there are no
+stitches to browse); an empty tab is replaced by it, as with a `.dst`.
+
+The `.emb` type is declared like `.dst` (`com.bobbymarko.stitchpeek.wilcom-emb`), at *Alternate*
+handler rank — and, like `.dst`, **Embrilliance's own type is claimed too**
+(`com.britonleap.emb`, imported in the host app and listed in both extensions'
+`QLSupportedContentTypes`). Where Embrilliance is installed every `.emb` resolves to its type,
+so without that claim previews and thumbnails silently never ran: on a Mac with Embrilliance,
+`qlmanage -x -t` made a `.dst` thumbnail and nothing for the same `.emb`, and the claim fixed it.
+
+Thread names are what the file stores, and Wilcom keeps a palette slot's old name when the
+designer recolours it without renaming — so a green thread can be called "Pink". The swatch
+colours are right (they match the stored picture); the names are only as good as the file's.
+
+Tests: `swift test` builds synthetic compound files, so no sample is committed. For real files
+(never commit them), the Python mirror and the Swift reader can be diffed:
+
+```bash
+python3 Scripts/test_emb_reference.py        # reference vs an independent reader, over EMB_SAMPLES
+STITCHPEEK_EMB_SAMPLES=~/some/folder swift test --package-path Packages/StitchKit
+Scripts/emb_reference.py dump a.emb | diff - <(Packages/StitchKit/.build/release/stitchdump emb a.emb)
+Packages/StitchKit/.build/release/stitchdump embpng a.emb out.png     # the Quick Look layout
+```
 
 ---
 

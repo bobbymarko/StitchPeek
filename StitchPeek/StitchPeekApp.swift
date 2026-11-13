@@ -24,6 +24,7 @@ struct StitchPeekApp: App {
         // change, and let the library flush whatever arrived before then.
         .onChange(of: scenePhase, initial: true) { _, _ in
             Library.shared.openWindow = { openWindow(id: "collection", value: $0) }
+            Library.shared.openEMBWindow = { openWindow(id: "emb", value: $0) }
             Library.shared.flushPending()
         }
         .commands {
@@ -39,6 +40,13 @@ struct StitchPeekApp: App {
             ViewCommands()
             AppMenuCommands()
         }
+
+        // One window per Wilcom .emb. Opening the same file again brings its window forward.
+        WindowGroup(id: "emb", for: URL.self) { $url in
+            EMBWindow(url: url)
+        }
+        .handlesExternalEvents(matching: [])
+        .defaultSize(width: 900, height: 560)
 
         Settings {
             SettingsView()

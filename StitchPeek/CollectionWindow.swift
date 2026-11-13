@@ -11,7 +11,7 @@ import UniformTypeIdentifiers
 ///   that are still being created at launch, and a spurious window that survives is exactly
 ///   the bug this exists to prevent;
 /// - opening as a tab of the front window rather than as a window of its own.
-private struct WindowConfigurator: NSViewRepresentable {
+struct WindowConfigurator: NSViewRepresentable {
     var closes: Bool
 
     func makeNSView(context: Context) -> WindowHookView {
@@ -130,10 +130,13 @@ struct CollectionWindow: View {
                     closeRequested = true
                     return
                 }
-                library.registerEmptyWindow(token: token) {
+                library.registerEmptyWindow(token: token, adopt: {
                     collectionID = $0.id
                     library.windowDidAppear(for: $0.id)
-                }
+                }, replace: {
+                    // An .emb opened as its own tab beside this one: close this empty one.
+                    closeRequested = true
+                })
             }
         }
         .background(WindowConfigurator(closes: closeRequested))
@@ -161,7 +164,7 @@ private struct EmptyStateView: View {
         ContentUnavailableView {
             Label("No Designs Open", systemImage: "square.grid.2x2")
         } description: {
-            Text("Open one or more .dst files, or drop them here.")
+            Text("Open one or more .dst files (or a Wilcom .emb), or drop them here.")
         } actions: {
             Button("Open…") { Library.shared.presentOpenPanel() }
                 .keyboardShortcut("o", modifiers: .command)
@@ -171,10 +174,10 @@ private struct EmptyStateView: View {
         .frame(minWidth: 480, minHeight: 320)
         .background(isTargeted ? Color.accentColor.opacity(0.08) : Color.clear)
         .dropDestination(for: URL.self) { urls, _ in
-            let accepted = urls.filter { $0.pathExtension.lowercased() == "dst" }
+            let accepted = urls.filter { ["dst", "emb"].contains($0.pathExtension.lowercased()) }
             guard !accepted.isEmpty else { return false }
-            // This window is registered as empty, so the drop lands here rather than in a
-            // new window.
+            // This window is registered as empty, so a dropped .dst lands here rather than in
+            // a new window. (A .emb opens its own.)
             Library.shared.open(accepted)
             return true
         } isTargeted: { isTargeted = $0 }

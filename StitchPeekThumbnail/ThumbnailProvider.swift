@@ -16,6 +16,11 @@ final class ThumbnailProvider: QLThumbnailProvider {
         for request: QLFileThumbnailRequest,
         _ handler: @escaping (QLThumbnailReply?, Error?) -> Void
     ) {
+        if request.fileURL.pathExtension.lowercased() == "emb" {
+            provideEMBThumbnail(for: request, handler)
+            return
+        }
+
         do {
             let design = try DSTParser.parse(contentsOf: request.fileURL, decimated: true)
 
@@ -37,6 +42,34 @@ final class ThumbnailProvider: QLThumbnailProvider {
         } catch {
             Self.log.error("could not parse \(request.fileURL.lastPathComponent, privacy: .public): \(error.localizedDescription, privacy: .public)")
             // Reporting the error lets Finder fall back to the generic document icon.
+            handler(nil, error)
+        }
+    }
+
+    /// Wilcom EMB: the picture stored in the file, trimmed of its grey padding. The design
+    /// stream is encrypted and is never read.
+    private func provideEMBThumbnail(
+        for request: QLFileThumbnailRequest,
+        _ handler: @escaping (QLThumbnailReply?, Error?) -> Void
+    ) {
+        do {
+            let design = try EMBReader.parse(contentsOf: request.fileURL)
+            guard let image = EMBRenderer.previewImage(for: design) else {
+                handler(nil, EMBError.badPreview("the file has no preview image"))
+                return
+            }
+            let contextSize = EMBRenderer.fittedSize(for: image, max: request.maximumSize)
+            handler(
+                QLThumbnailReply(contextSize: contextSize) { context in
+                    // Decoded again here rather than captured, as in the preview extension.
+                    guard let image = EMBRenderer.previewImage(for: design) else { return false }
+                    EMBRenderer.renderThumbnail(image, into: context, size: contextSize)
+                    return true
+                },
+                nil
+            )
+        } catch {
+            Self.log.error("could not parse \(request.fileURL.lastPathComponent, privacy: .public): \(error.localizedDescription, privacy: .public)")
             handler(nil, error)
         }
     }
