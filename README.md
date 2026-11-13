@@ -236,8 +236,15 @@ of the extension.
 
 Open one file and you land in the viewer. Open several — select them in Finder and open
 them together, or ⌘O with multiple selection, or drop them on a window — and you land in an
-**index** of that batch first. This is Preview.app's model: each open action becomes one
-window holding that batch, and an empty window that is already showing is reused.
+**index** of that batch first.
+
+Every open action becomes a **tab** in the front window — one design, or one batch with its
+index. ⌘T opens an empty tab, ready for Open… or a drop, and a file opened while an empty
+tab is showing fills it rather than adding another. These are native macOS window tabs, so
+⌃Tab / ⇧⌘] switch between them, a tab can be dragged out into its own window (or *Window →
+Move Tab to New Window*), and *Window → Merge All Windows* gathers them back. A batch tab is
+named for the folder it came from; if two open tabs would share that name, they're named for
+their first design instead ("dw-bp-alma + 21 more").
 
 The index has two arrangements, switched from the toolbar:
 
@@ -256,8 +263,10 @@ bulk-order handout. PDF paginates (twelve designs a page in the grid, five in th
 with a running total in the header; PNG is one tall image of everything.
 
 Under the hood this replaced `DocumentGroup` with a `WindowGroup` keyed by batch and an
-`NSApplicationDelegate` receiving files. Three things bit on the way and are worth knowing
-if you touch it:
+`NSApplicationDelegate` receiving files; each window joins the front window's tab group as it
+is attached (`WindowTabbing` in `CollectionWindow.swift`), before it's first shown, so it never
+flashes up as a separate window. Three things bit on the way and are worth knowing if you
+touch it:
 
 - The scene must opt out of URL handling (`handlesExternalEvents(matching: [])`), or
   SwiftUI spawns a window per file on top of the delegate call. Three files became five

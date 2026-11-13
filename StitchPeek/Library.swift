@@ -168,7 +168,19 @@ final class DesignCollection: Identifiable {
 
     /// The folder the designs came from, when they share one — for a batch that is
     /// usually the order name. A single design is titled by its own name.
+    /// The window and tab title. A batch is named for the folder it came from — for an order
+    /// that's usually the order's name — unless another open tab already has that name, in
+    /// which case its first design is named instead so tabs side by side stay tellable apart.
     var title: String {
+        let base = baseTitle
+        guard designs.count > 1,
+              Library.shared.collections.values.contains(where: { $0 !== self && $0.baseTitle == base }),
+              let first = designs.first
+        else { return base }
+        return "\(first.displayName) + \(designs.count - 1) more"
+    }
+
+    var baseTitle: String {
         if designs.count == 1, let only = designs.first { return only.displayName }
         let folders = Set(designs.map { $0.url.deletingLastPathComponent() })
         if folders.count == 1, let folder = folders.first { return folder.lastPathComponent }
@@ -228,6 +240,8 @@ final class Library {
     @ObservationIgnored private var pending: [DesignCollection] = []
     /// Empty windows waiting for content, keyed by a per-window token.
     @ObservationIgnored private var adopters: [UUID: @MainActor (DesignCollection) -> Void] = [:]
+    /// Registration order, newest last, so a batch fills the empty tab opened most recently.
+    @ObservationIgnored private var adopterOrder: [UUID] = []
     /// Collections whose window has actually appeared — the check behind `requestWindow`.
     @ObservationIgnored private var appeared: Set<UUID> = []
 
@@ -237,6 +251,11 @@ final class Library {
 
     /// True while some window is showing the empty state and waiting for a batch.
     var hasEmptyWindow: Bool { !adopters.isEmpty }
+
+    @ObservationIgnored private let createdAt = Date()
+    /// The first few seconds after launch, when SwiftUI's and macOS's own windows are still
+    /// arriving. `Library.shared` is first touched by the scene at launch.
+    var isLaunching: Bool { Date().timeIntervalSince(createdAt) < 3 }
     /// True while any window is showing a batch.
     var hasOpenCollections: Bool { !collections.isEmpty }
 
@@ -287,8 +306,9 @@ final class Library {
     // MARK: Window placement
 
     private func place(_ collection: DesignCollection) {
-        if let (token, adopt) = adopters.first {
+        if let token = adopterOrder.last(where: { adopters[$0] != nil }), let adopt = adopters[token] {
             adopters[token] = nil
+            adopterOrder.removeAll { $0 == token }
             adopt(collection)
         } else if openWindow != nil {
             requestWindow(for: collection)
@@ -337,10 +357,13 @@ final class Library {
     /// An empty window announces itself and waits for the next batch.
     func registerEmptyWindow(token: UUID, adopt: @escaping @MainActor (DesignCollection) -> Void) {
         adopters[token] = adopt
+        adopterOrder.removeAll { $0 == token }
+        adopterOrder.append(token)
     }
 
     func unregisterEmptyWindow(token: UUID) {
         adopters[token] = nil
+        adopterOrder.removeAll { $0 == token }
     }
 
     // MARK: Loading
