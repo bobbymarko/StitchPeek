@@ -29,6 +29,10 @@ struct StitchPeekApp: App {
         }
         .commands {
             CommandGroup(replacing: .newItem) {
+                // An empty tab, ready for Open… or a drop. Tabs join the front window
+                // (see WindowTabbing).
+                Button("New Tab") { openWindow(id: "collection") }
+                    .keyboardShortcut("t", modifiers: .command)
                 Button("Open…") { Library.shared.presentOpenPanel() }
                     .keyboardShortcut("o", modifiers: .command)
                 RecentDocumentsMenu()

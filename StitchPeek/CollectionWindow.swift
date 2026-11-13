@@ -2,33 +2,74 @@ import AppKit
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Reaches the hosting NSWindow for two things SwiftUI on macOS 14 has no API for:
+/// Reaches the hosting NSWindow for what SwiftUI on macOS 14 has no API for:
 ///
 /// - switching off state restoration — collections are not persisted, so a window restored
 ///   from a previous launch would only ever point at nothing (`restorationBehavior` arrived
 ///   in macOS 15);
 /// - closing the window deterministically. `dismissWindow()` proved unreliable for windows
 ///   that are still being created at launch, and a spurious window that survives is exactly
-///   the bug this exists to prevent.
+///   the bug this exists to prevent;
+/// - opening as a tab of the front window rather than as a window of its own.
 private struct WindowConfigurator: NSViewRepresentable {
     var closes: Bool
 
-    func makeNSView(context: Context) -> NSView {
-        let view = NSView()
-        DispatchQueue.main.async { apply(to: view) }
+    func makeNSView(context: Context) -> WindowHookView {
+        let view = WindowHookView()
+        view.closes = closes
         return view
     }
 
-    func updateNSView(_ view: NSView, context: Context) {
-        apply(to: view)
+    func updateNSView(_ view: WindowHookView, context: Context) {
+        view.closes = closes
+        view.applyIfReady()
+    }
+}
+
+/// Configures its window the moment it is attached — before the window is first shown, so
+/// a new tab joins its group instead of flashing up as a window first.
+final class WindowHookView: NSView {
+    var closes = false
+    private var tabbed = false
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        applyIfReady()
     }
 
-    private func apply(to view: NSView) {
-        guard let window = view.window else { return }
+    func applyIfReady() {
+        guard let window else { return }
         window.isRestorable = false
         if closes {
             DispatchQueue.main.async { window.close() }
+            return
         }
+        guard !tabbed else { return }
+        tabbed = true
+        WindowTabbing.adopt(window)
+    }
+}
+
+/// Every StitchPeek window shares one tabbing identifier and prefers tabs, and a new one
+/// joins the front window's tab group. Native window tabs rather than a home-made tab
+/// strip: the tab shortcuts, Merge All Windows, dragging a tab out into its own window and
+/// Move Tab to New Window all come with them.
+@MainActor
+enum WindowTabbing {
+    static let identifier = "com.bobbymarko.stitchpeek.collection"
+
+    static func adopt(_ window: NSWindow) {
+        window.tabbingIdentifier = identifier
+        window.tabbingMode = .preferred
+
+        let others = NSApp.orderedWindows.filter {
+            $0 !== window && $0.tabbingIdentifier == identifier && $0.isVisible && !$0.isMiniaturized
+        }
+        // The window you're looking at, else the frontmost one of ours.
+        let host = NSApp.mainWindow.flatMap { main in others.contains(main) ? main : nil } ?? others.first
+        guard let host, window.tabbedWindows?.contains(host) != true else { return }
+        host.addTabbedWindow(window, ordered: .above)
+        window.makeKeyAndOrderFront(nil)
     }
 }
 
@@ -82,12 +123,10 @@ struct CollectionWindow: View {
                     library.windowDidAppear(for: waiting.id)
                     return
                 }
-                // One empty window is useful — but only when there is nothing else to look at.
-                // Nothing in the app creates an empty window on purpose while a batch is open,
-                // so a second one is always noise: a window restored from an earlier launch,
-                // or the extra window SwiftUI makes at launch alongside the one the batch
-                // landed in.
-                if library.hasEmptyWindow || library.hasOpenCollections {
+                // At launch, an empty window alongside a batch (or a second empty one) is noise:
+                // SwiftUI's own launch window, or one macOS restored. After launch, an empty
+                // window is one the person asked for — ⌘T or the tab bar's + — so it stays.
+                if library.isLaunching && (library.hasEmptyWindow || library.hasOpenCollections) {
                     closeRequested = true
                     return
                 }
