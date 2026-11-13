@@ -37,6 +37,7 @@
 				<string>com.bobbymarko.stitchpeek.tajima-dst</string>
 				<string>com.britonleap.dst</string>
 				<string>com.bobbymarko.stitchpeek.wilcom-emb</string>
+				<string>com.britonleap.emb</string>
 			</array>
 			<key>QLSupportsSearchableItems</key>
 			<false/>

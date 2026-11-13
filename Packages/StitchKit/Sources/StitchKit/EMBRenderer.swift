@@ -134,7 +134,11 @@ public enum EMBRenderer {
 
         for row in design.infoRows {
             drawText(row.label, x: x, y: y, width: 110, size: 14, bold: false, color: muted, in: context)
-            drawText(row.value, x: x + 118, y: y, width: width - 118, size: 14, bold: false, color: ink, in: context)
+            for (index, line) in row.value.split(separator: "\n", omittingEmptySubsequences: false).enumerated() {
+                if index > 0 { y -= 19 }
+                drawText(String(line), x: x + 118, y: y, width: width - 118, size: 14, bold: false,
+                         color: index == 0 ? ink : muted, in: context)
+            }
             y -= 24
         }
 

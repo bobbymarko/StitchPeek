@@ -319,7 +319,8 @@ extension EMBDesign {
     /// preview and the viewer so the two always agree.
     public var infoRows: [(label: String, value: String)] {
         var rows: [(label: String, value: String)] = []
-        rows.append(("Size", String(format: "%.1f × %.1f mm  (%.2f × %.2f in)", widthMM, heightMM, widthInches, heightInches)))
+        // mm and inches on separate lines: on one line the inches were cut off in Quick Look.
+        rows.append(("Size", String(format: "%.1f × %.1f mm\n%.2f × %.2f in", widthMM, heightMM, widthInches, heightInches)))
         rows.append(("Stitches", stitchCount.formatted()))
         rows.append(("Colors", colorCount.formatted() + (colorChangeCount > 0 ? "  ·  \(colorChangeCount) color change\(colorChangeCount == 1 ? "" : "s")" : "")))
         rows.append(("Trims", trimCount.formatted()))

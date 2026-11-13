@@ -12,6 +12,10 @@ extension UTType {
     static var dstTypes: [UTType] { [.tajimaDST, .embrillianceDST] }
     /// Wilcom EmbroideryStudio / Hatch design, declared in Info.plist. Opens in its own window.
     static let wilcomEMB = UTType(exportedAs: "com.bobbymarko.stitchpeek.wilcom-emb")
+    /// Embrilliance's identifier for .emb, imported in Info.plist — what a .emb resolves to
+    /// where Embrilliance is installed.
+    static let embrillianceEMB = UTType(importedAs: "com.britonleap.emb")
+    static var embTypes: [UTType] { [.wilcomEMB, .embrillianceEMB] }
 }
 
 enum IndexLayout: String, CaseIterable, Identifiable {
@@ -246,6 +250,8 @@ final class Library {
     @ObservationIgnored private var pending: [DesignCollection] = []
     /// Empty windows waiting for content, keyed by a per-window token.
     @ObservationIgnored private var adopters: [UUID: @MainActor (DesignCollection) -> Void] = [:]
+    /// How each empty window closes itself when an .emb tab takes its place instead.
+    @ObservationIgnored private var replacers: [UUID: @MainActor () -> Void] = [:]
     /// Registration order, newest last, so a batch fills the empty tab opened most recently.
     @ObservationIgnored private var adopterOrder: [UUID] = []
     /// Collections whose window has actually appeared — the check behind `requestWindow`.
@@ -294,8 +300,10 @@ final class Library {
         load(accepted, into: collection)
     }
 
-    /// Wilcom files have no stitches to browse, so each opens in a window of its own.
+    /// Wilcom files have no stitches to browse, so each opens in a tab of its own (EMBWindow).
+    /// If an empty tab is showing, the first .emb takes its place, as a .dst batch would.
     private func openEMB(_ urls: [URL]) {
+        guard !urls.isEmpty else { return }
         for url in urls {
             RecentDocuments.shared.note(url)
             if let openEMBWindow {
@@ -304,12 +312,18 @@ final class Library {
                 pendingEMB.append(url)
             }
         }
+        if openEMBWindow != nil, let token = adopterOrder.last(where: { replacers[$0] != nil }),
+           let replace = replacers[token] {
+            unregisterEmptyWindow(token: token)
+            // After the new tab has joined the empty window's group, so it inherits its place.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { replace() }
+        }
     }
 
     func presentOpenPanel(addingTo collection: DesignCollection? = nil) {
         let panel = NSOpenPanel()
         // Adding to an existing window is DST only: an EMB would open a window of its own.
-        panel.allowedContentTypes = collection == nil ? UTType.dstTypes + [.wilcomEMB] : UTType.dstTypes
+        panel.allowedContentTypes = collection == nil ? UTType.dstTypes + UTType.embTypes : UTType.dstTypes
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
         panel.message = collection == nil ? "Choose one or more DST designs." : "Choose designs to add to this window."
@@ -328,6 +342,7 @@ final class Library {
     private func place(_ collection: DesignCollection) {
         if let token = adopterOrder.last(where: { adopters[$0] != nil }), let adopt = adopters[token] {
             adopters[token] = nil
+            replacers[token] = nil
             adopterOrder.removeAll { $0 == token }
             adopt(collection)
         } else if openWindow != nil {
@@ -380,14 +395,20 @@ final class Library {
     }
 
     /// An empty window announces itself and waits for the next batch.
-    func registerEmptyWindow(token: UUID, adopt: @escaping @MainActor (DesignCollection) -> Void) {
+    func registerEmptyWindow(
+        token: UUID,
+        adopt: @escaping @MainActor (DesignCollection) -> Void,
+        replace: @escaping @MainActor () -> Void
+    ) {
         adopters[token] = adopt
+        replacers[token] = replace
         adopterOrder.removeAll { $0 == token }
         adopterOrder.append(token)
     }
 
     func unregisterEmptyWindow(token: UUID) {
         adopters[token] = nil
+        replacers[token] = nil
         adopterOrder.removeAll { $0 == token }
     }
 

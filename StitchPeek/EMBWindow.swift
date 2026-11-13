@@ -6,7 +6,8 @@ import SwiftUI
 ///
 /// An EMB's stitches live in an encrypted stream that StitchPeek never reads, so there is no
 /// stitch canvas, scrubber or recolouring here: this shows the preview picture saved in the file
-/// and the design facts stored beside it. DST files keep their own window (`CollectionWindow`).
+/// and the design facts stored beside it. Each .emb gets its own tab; DST files use
+/// `CollectionWindow`.
 struct EMBWindow: View {
     let url: URL?
 
@@ -31,6 +32,9 @@ struct EMBWindow: View {
         }
         .frame(minWidth: 640, minHeight: 420)
         .navigationTitle(url?.lastPathComponent ?? "EMB")
+        // Opens as a tab of the front window, like every other design, and isn't restored
+        // at launch (see WindowConfigurator / WindowTabbing).
+        .background(WindowConfigurator(closes: false))
         .task(id: url) {
             guard let url else {
                 load = .failed("No file was given.")

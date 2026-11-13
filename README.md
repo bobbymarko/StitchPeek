@@ -250,10 +250,19 @@ so an EMB has **no stitch canvas, scrubber or recoloring**: its viewer window, p
 thumbnail show the stored picture and the facts only. The Quick Look preview adds an info panel
 with a swatch per thread.
 
+Each `.emb` opens as its own **tab** (there's no batch index for EMB, since there are no
+stitches to browse); an empty tab is replaced by it, as with a `.dst`.
+
 The `.emb` type is declared like `.dst` (`com.bobbymarko.stitchpeek.wilcom-emb`), at *Alternate*
-handler rank. Another app that exports its own `.emb` type may win the resolution; if previews
-don't appear, check `mdls -name kMDItemContentType some.emb`, then add that identifier to the two
-extensions' `QLSupportedContentTypes`, as was done for Embrilliance's `.dst`.
+handler rank — and, like `.dst`, **Embrilliance's own type is claimed too**
+(`com.britonleap.emb`, imported in the host app and listed in both extensions'
+`QLSupportedContentTypes`). Where Embrilliance is installed every `.emb` resolves to its type,
+so without that claim previews and thumbnails silently never ran: on a Mac with Embrilliance,
+`qlmanage -x -t` made a `.dst` thumbnail and nothing for the same `.emb`, and the claim fixed it.
+
+Thread names are what the file stores, and Wilcom keeps a palette slot's old name when the
+designer recolours it without renaming — so a green thread can be called "Pink". The swatch
+colours are right (they match the stored picture); the names are only as good as the file's.
 
 Tests: `swift test` builds synthetic compound files, so no sample is committed. For real files
 (never commit them), the Python mirror and the Swift reader can be diffed:

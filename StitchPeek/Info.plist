@@ -82,6 +82,27 @@
 	     `UTType("com.britonleap.dst")` resolve even if Embrilliance is later removed. -->
 	<key>UTImportedTypeDeclarations</key>
 	<array>
+		<!-- Same story for .emb: Embrilliance exports com.britonleap.emb, and where it is
+		     installed every .emb resolves to that type, never to StitchPeek's wilcom-emb. Without
+		     claiming it here and in both extensions, .emb previews and thumbnails silently never
+		     ran on a Mac with Embrilliance (checked: qlmanage made a .dst thumbnail but no .emb). -->
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.britonleap.emb</string>
+			<key>UTTypeDescription</key>
+			<string>Wilcom Embroidery Design</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>emb</string>
+				</array>
+			</dict>
+		</dict>
 		<dict>
 			<key>UTTypeIdentifier</key>
 			<string>com.britonleap.dst</string>
@@ -115,6 +136,7 @@
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.bobbymarko.stitchpeek.wilcom-emb</string>
+				<string>com.britonleap.emb</string>
 			</array>
 		</dict>
 		<dict>
